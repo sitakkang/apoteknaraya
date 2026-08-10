@@ -165,11 +165,6 @@ class Sks extends CI_Controller {
         // Ambil patient_job dari ms_patient berdasarkan nama pasien
         $patient_job = $this->M_sks->get_patient_job_by_name($this->input->post('patient_name'));
 
-        if ($this->form_validation->run() == FALSE) {
-            echo json_encode(array('status' => 1, 'notif' => validation_errors()));
-            return;
-        }
-
         $data = array(
             'patient_name' => strtoupper(trim($this->input->post('patient_name'))),
             'company_name' => strtoupper(trim($this->input->post('company_name'))),
