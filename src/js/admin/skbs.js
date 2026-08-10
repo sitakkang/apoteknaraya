@@ -5,9 +5,8 @@ $(document).ready(function () {
     // --- DataTable ---
     tabel_skbs = $('#tabel_skbs').DataTable({
         processing: true,
-        serverSide: false,
+        serverSide: true,
         scrollY: "500px",
-        deferRender: true,
         scrollX: true,
         scrollCollapse: true,
         fixedColumns: {
@@ -19,7 +18,7 @@ $(document).ready(function () {
             type: 'GET',
         },
         columns: [
-            { data: '0', width: '40px' },
+            { data: '0', width: '40px', orderable: false, searchable: false },
             { data: '1'},
             { data: '2', className: 'text-center' },
             { data: '3'},
@@ -31,6 +30,7 @@ $(document).ready(function () {
                 data: null,
                 width: '100px',
                 orderable: false,
+                searchable: false,
                 className: 'text-center',
                 render: function (data, type, row) {
                     return '<div class="ds-act-group">' +
@@ -54,7 +54,6 @@ $(document).ready(function () {
             emptyTable: 'Belum ada data SKBS',
             paginate: { previous: '&laquo;', next: '&raquo;' },
         },
-        order: [[0, 'asc']],
         responsive: true,
         autoWidth: false,
     });

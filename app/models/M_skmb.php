@@ -9,16 +9,66 @@ class M_skmb extends CI_Model {
     }
 
     /**
-     * Get all SKMB records for DataTable
+     * DataTables server-side: data untuk halaman aktif
      */
-    public function get_all() {
-        return $this->db->query(
-            'SELECT id, patient_name, nik, bagian, company_name, pengantar, nik_pengantar,
-                    company_pengantar, hubungan, tgl_datang, jam,
-                    docdate, doct_by_name, docnumb, insertby, insertdt
-             FROM skmb
-             ORDER BY insertdt DESC'
+    public function get_datatables($search, $order_col, $order_dir, $start, $length) {
+        $this->_dt_query($search, $order_col, $order_dir);
+
+        if ($length != -1) {
+            $this->db->limit(intval($length), intval($start));
+        }
+
+        return $this->db->get()->result();
+    }
+
+    /**
+     * DataTables server-side: jumlah record hasil filter
+     */
+    public function count_filtered($search, $order_col, $order_dir) {
+        $this->_dt_query($search, $order_col, $order_dir);
+        return $this->db->count_all_results();
+    }
+
+    /**
+     * DataTables server-side: jumlah total seluruh record
+     */
+    public function count_all() {
+        return $this->db->count_all($this->table);
+    }
+
+    /**
+     * Query builder dasar untuk server-side (search + order)
+     */
+    private function _dt_query($search, $order_col, $order_dir) {
+        $columns = array(
+            1 => 'patient_name',
+            2 => 'nik',
+            3 => 'company_name',
+            4 => 'pengantar',
+            5 => 'tgl_datang',
+            6 => 'jam',
+            7 => 'docnumb',
+            8 => 'docdate',
         );
+
+        $this->db->from($this->table);
+
+        if (!empty($search)) {
+            $this->db->group_start();
+            $this->db->like('patient_name', $search);
+            $this->db->or_like('nik', $search);
+            $this->db->or_like('company_name', $search);
+            $this->db->or_like('pengantar', $search);
+            $this->db->or_like('docnumb', $search);
+            $this->db->group_end();
+        }
+
+        if (isset($columns[$order_col])) {
+            $dir = strtoupper($order_dir) === 'DESC' ? 'DESC' : 'ASC';
+            $this->db->order_by($columns[$order_col], $dir);
+        } else {
+            $this->db->order_by('insertdt', 'DESC');
+        }
     }
 
     /**

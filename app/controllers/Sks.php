@@ -34,21 +34,39 @@ class Sks extends CI_Controller {
     }
 
     /**
-     * DataTables JSON source
+     * DataTables JSON source (server-side processing)
      */
     public function table() {
-        $rows = $this->M_sks->get_all();
+        $draw   = intval($this->input->get('draw'));
+        $start  = intval($this->input->get('start'));
+        $length = intval($this->input->get('length'));
 
-        $draw = intval($this->input->get('draw'));
+        $search_raw = $this->input->get('search');
+        $search = (!empty($search_raw) && isset($search_raw['value']))
+            ? trim($search_raw['value'])
+            : '';
+
+        $order_raw = $this->input->get('order');
+        $order_col = (!empty($order_raw) && isset($order_raw[0]['column']))
+            ? intval($order_raw[0]['column'])
+            : -1;
+        $order_dir = (!empty($order_raw) && isset($order_raw[0]['dir']))
+            ? $order_raw[0]['dir']
+            : 'asc';
+
+        $total    = $this->M_sks->count_all();
+        $filtered = $this->M_sks->count_filtered($search, $order_col, $order_dir);
+        $rows     = $this->M_sks->get_datatables($search, $order_col, $order_dir, $start, $length);
+
         $data = array();
-        $i    = 1;
+        $i    = $start + 1;
 
         $gender_label = array(
             'L' => '<span class="badge badge-info">Laki-laki</span>',
             'P' => '<span class="badge badge-danger">Perempuan</span>',
         );
 
-        foreach ($rows->result() as $row) {
+        foreach ($rows as $row) {
             $gender = isset($gender_label[$row->gender])
                 ? $gender_label[$row->gender]
                 : '<span class="badge badge-secondary">-</span>';
@@ -69,8 +87,8 @@ class Sks extends CI_Controller {
 
         echo json_encode(array(
             'draw'            => $draw,
-            'recordsTotal'    => $rows->num_rows(),
-            'recordsFiltered' => $rows->num_rows(),
+            'recordsTotal'    => $total,
+            'recordsFiltered' => $filtered,
             'data'            => $data,
         ));
         exit();
