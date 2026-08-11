@@ -54,6 +54,7 @@ $route['login'] = 'auth/login';
 $route['logout'] = 'auth/logout';
 $route['home'] = 'home/dashboard';
 $route['profil'] = 'admin/profil';
+$route['user_guide'] = 'user_guide';
 
 $route['recruitment'] = 'recruitment/menu';
 
