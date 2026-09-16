@@ -3,34 +3,90 @@
 <head>
     <title>Cetak SKS</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; margin: 0; padding: 10px; color: #333; }
-        .header { text-align: center; margin-bottom: 8px; }
-        .header h2 { margin: 0; color: #2d6a4f; font-size: 15px; }
-        .header p { margin: 1px 0 0; font-size: 10px; color: #666; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        table tr td { padding: 2px 6px; vertical-align: top; }
-        table tr td:first-child { width: 120px; color: #666; font-weight: 600; }
-        table tr td:nth-child(2) { width: 8px; color: #999; }
-        .section { margin-bottom: 8px; }
-        .section-title { font-weight: 700; font-size: 14px; color: #2d6a4f; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid #dceee4; }
-        .footer { margin-top: 12px; text-align: center; font-size: 10px; color: #999; border-top: 1px solid #ddd; padding-top: 6px; }
+        /* ═══════════════════════════════════════════════════
+           SKS — Desain RESMI (monokrom)
+           ══════════════════════════════════════════════════ */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 10px 22px;
+            color: #1a1a1a;
+        }
 
-        /* Signature block — bottom right */
-        .ttd-wrap { display: flex; justify-content: flex-end; margin-top: 16px; }
-        .ttd-box  { text-align: center; min-width: 180px; }
-        .ttd-place { margin: 0 0 2px; font-size: 14px; color: #333; }
-        .ttd-role  { margin: 0 0 2px; font-size: 13px; color: #666; }
-        .ttd-qr    { margin: 3px 0; }
-        .ttd-qr img { width: 60px; height: 60px; display: block; margin: 0 auto; }
-        .ttd-name  { margin: 2px 0 0; font-size: 14px; font-weight: 700; color: #333; border-top: 1px solid #333; padding-top: 4px; display: inline-block; min-width: 160px; }
-        .ttd-nip   { margin: 1px 0 0; font-size: 12px; color: #666; }
+        /* ── KOP SURAT ────────────────────────────────── */
+        .kop { text-align: center; }
+        .kop-instansi { font-size: 16px; font-weight: 700; letter-spacing: 1.6px; }
+        .kop-dokter   { font-size: 13px; font-weight: 600; margin-top: 2px; }
+        .kop-alamat   { font-size: 12px; color: #555; margin-top: 2px; }
+        .kop hr.tebal { border: 0; border-top: 2px solid #1a1a1a; margin: 5px 0 0; }
+        .kop hr.tipis { border: 0; border-top: 1px solid #1a1a1a; margin: 2px 0 0; }
 
-        .btn-print { display: inline-block; margin-bottom: 8px; padding: 6px 16px; background: #2d6a4f; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .btn-print:hover { background: #1b4332; }
+        /* ── JUDUL DOKUMEN ────────────────────────────── */
+        .judul { text-align: center; margin: 14px 0; }
+        .judul h1 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: underline;
+            text-underline-offset: 5px;
+        }
+        .judul .nomor { margin: 5px 0 0; font-size: 15px; }
+
+        /* ── BAGIAN / SECTION ─────────────────────────── */
+        .section { margin-bottom: 9px; }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 3px;
+            margin-bottom: 5px;
+        }
+        .section-title .angka { display: inline-block; min-width: 30px; }
+
+        /* ── TABEL DATA (tanpa bingkai / garis) ───────── */
+        table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table.data td {
+            border: 0;
+            padding: 3px 8px;
+            vertical-align: top;
+        }
+        table.data td.label { width: 170px; font-weight: 600; }
+        table.data td.pemisah { width: 14px; text-align: center; padding-left: 0; padding-right: 0; }
+
+        /* ── NARASI ───────────────────────────────────── */
+        .narasi { font-size: 14px; line-height: 1.7; text-align: justify; margin: 0 0 8px; }
+        .narasi:last-child { margin-bottom: 0; }
+
+        /* ── TANDA TANGAN ─────────────────────────────── */
+        .ttd-wrap { display: flex; justify-content: flex-end; margin-top: 14px; }
+        .ttd-box  { text-align: center; min-width: 240px; }
+        .ttd-place { margin: 0 0 2px; font-size: 14px; }
+        .ttd-role  { margin: 0 0 2px; font-size: 14px; }
+        .ttd-qr    { margin: 8px 0 4px; }
+        .ttd-qr img { width: 80px; height: 80px; display: block; margin: 0 auto; }
+        .ttd-name  { margin: 0; font-size: 14px; font-weight: 700; border-top: 1px solid #1a1a1a; padding-top: 4px; display: inline-block; min-width: 200px; }
+        .ttd-nip   { margin: 3px 0 0; font-size: 12px; color: #555; }
+
+        /* ── FOOTER ───────────────────────────────────── */
+        .footer { margin-top: 14px; border-top: 1px solid #c4c4c4; padding-top: 5px; }
+        .footer p { margin: 0; font-size: 10px; color: #666; text-align: center; font-style: italic; }
+
+        /* ── TOMBOL (hanya tampil di layar) ───────────── */
+        .btn-print { display: inline-block; margin-bottom: 10px; padding: 6px 16px; background: #1a1a1a; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-print:hover { background: #000; }
+
+        /* ── CETAK: kunci ke 1 lembar A4 ──────────────── */
+        @page { size: A4 portrait; margin: 10mm 12mm; }
 
         @media print {
             body { padding: 0; }
             .no-print { display: none; }
+            .section, .ttd-wrap, .footer { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -38,65 +94,65 @@
     <button class="btn-print no-print" onclick="window.print()"><i class="fa fa-print"></i> Print / PDF</button>
     <button class="btn-print no-print" onclick="window.close()" style="background: #666; margin-left: 6px;">Tutup</button>
 
-    <div class="header">
-        <hr style="border:1px solid #2d6a4f;margin:0 0 4px;">
-        <div style="font-size:16px;font-weight:700;color:#2d6a4f;">PRAKTEK DOKTER UMUM</div>
-        <div style="font-size:13px;color:#555;font-weight:600;">dr. Steve Kojongian</div>
-        <div style="font-size:12px;color:#888;margin-top:1px;">
-            Jl. Trans Sulawesi, Ds. Bahodopi, Kec Bahodopi, Morowali &nbsp;|&nbsp; Telp. 081342161194
+    <!-- ══════════ KOP SURAT ══════════ -->
+    <div class="kop">
+        <div class="kop-instansi">PRAKTEK DOKTER UMUM</div>
+        <div class="kop-dokter">dr. Steve Kojongian</div>
+        <div class="kop-alamat">
+            Jl. Trans Sulawesi, Ds. Bahodopi, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 081342161194
         </div>
-        <hr style="border:1px solid #2d6a4f;margin:4px 0 5px;">
-        <h2 style="font-size:17px;margin:0;">SURAT KETERANGAN SAKIT (SKS)</h2>
-        <p style="font-size:15px;margin:0;">No. Dokumen: <?= htmlspecialchars($row->docnumb) ?></p>
+        <hr class="tebal">
+        <hr class="tipis">
     </div>
 
+    <!-- ══════════ JUDUL DOKUMEN ══════════ -->
+    <div class="judul">
+        <h1>SURAT KETERANGAN SAKIT (SKS)</h1>
+        <p class="nomor">No. Dokumen: <?= htmlspecialchars($row->docnumb) ?></p>
+    </div>
+
+    <!-- ══════════ I. IDENTITAS PASIEN ══════════ -->
     <div class="section">
-        <div class="section-title">Identitas Pasien</div>
-        <table>
-            <tr><td>Nama Pasien</td><td>:</td><td><?= htmlspecialchars($row->patient_name) ?></td></tr>
-            <tr><td>Umur</td><td>:</td><td><?= htmlspecialchars($row->age) ?: '-' ?> Tahun</td></tr>
-            <tr><td>Jenis Kelamin</td><td>:</td><td><?= $row->gender === 'L' ? 'Laki-laki' : ($row->gender === 'P' ? 'Perempuan' : '-') ?></td></tr>
-            <tr><td>Perusahaan</td><td>:</td><td><?= htmlspecialchars($row->company_name) ?: '-' ?></td></tr>
-            <tr><td>Pekerjaan</td><td>:</td><td><?= htmlspecialchars($row->patient_job) ?: '-' ?></td></tr>
+        <div class="section-title"><span class="angka">I.</span>Identitas Pasien</div>
+        <table class="data">
+            <tr><td class="label">Nama Pasien</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->patient_name) ?></td></tr>
+            <tr><td class="label">Umur</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->age) ?: '-' ?> Tahun</td></tr>
+            <tr><td class="label">Jenis Kelamin</td><td class="pemisah">:</td><td><?= $row->gender === 'L' ? 'Laki-laki' : ($row->gender === 'P' ? 'Perempuan' : '-') ?></td></tr>
+            <tr><td class="label">Perusahaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->company_name) ?: '-' ?></td></tr>
+            <tr><td class="label">Pekerjaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->patient_job) ?: '-' ?></td></tr>
         </table>
     </div>
 
+    <!-- ══════════ II. ALAMAT ══════════ -->
     <div class="section">
-        <div class="section-title">Alamat</div>
-        <table>
+        <div class="section-title"><span class="angka">II.</span>Alamat</div>
+        <table class="data">
             <tr>
-                <td>Alamat</td><td>:</td>
+                <td class="label">Alamat</td><td class="pemisah">:</td>
                 <td><?= !empty($row->alamat) ? nl2br(htmlspecialchars($row->alamat)) : '-' ?></td>
             </tr>
         </table>
     </div>
 
+    <!-- ══════════ III. DIAGNOSA ══════════ -->
     <div class="section">
-        <div class="section-title">Diagnosa</div>
-        <table>
-            <tr><td>Diagnosa</td><td>:</td><td><?= nl2br(htmlspecialchars($row->diagnosa)) ?></td></tr>
+        <div class="section-title"><span class="angka">III.</span>Diagnosa</div>
+        <table class="data">
+            <tr><td class="label">Diagnosa</td><td class="pemisah">:</td><td><?= nl2br(htmlspecialchars($row->diagnosa)) ?></td></tr>
         </table>
     </div>
 
+    <!-- ══════════ IV. TERAPI ══════════ -->
     <div class="section">
-        <div class="section-title">Terapi</div>
-        <table>
-            <tr><td>Terapi</td><td>:</td><td><?= nl2br(htmlspecialchars($row->terapi)) ?></td></tr>
+        <div class="section-title"><span class="angka">IV.</span>Terapi</div>
+        <table class="data">
+            <tr><td class="label">Terapi</td><td class="pemisah">:</td><td><?= nl2br(htmlspecialchars($row->terapi)) ?></td></tr>
         </table>
     </div>
 
+    <!-- ══════════ V. KETERANGAN DOKTER ══════════ -->
     <div class="section">
-        <div class="section-title">Masa Berlaku</div>
-        <table>
-            <tr><td>Dari Tanggal</td><td>:</td><td><?= !empty($row->datefrom) ? date('d/m/Y', strtotime($row->datefrom)) : '-' ?></td></tr>
-            <tr><td>Sampai Tanggal</td><td>:</td><td><?= !empty($row->dateto) ? date('d/m/Y', strtotime($row->dateto)) : '-' ?></td></tr>
-            <!-- <tr><td>Tanggal Dokumen</td><td>:</td><td><?= !empty($row->docdate) ? date('d/m/Y', strtotime($row->docdate)) : '-' ?></td></tr> -->
-        </table>
-    </div>
-
-    <!-- Medical Certificate Statement -->
-    <div class="section">
-        <div class="section-title">Keterangan Dokter</div>
+        <div class="section-title"><span class="angka">V.</span>Keterangan Dokter</div>
         <?php
         function tgl_indo($date) {
             $bulan_indo = array(
@@ -132,11 +188,11 @@
             if ($lama < 0) $lama = 0;
         }
         ?>
-        <p style="font-size: 14px; line-height: 1.5; text-align: justify; margin: 4px 0;">
+        <p class="narasi">
             Berdasarkan hasil pemeriksaan medis bahwa benar yang bersangkutan dalam keadaan sakit dan membutuhkan waktu istirahat selama <b><?= $lama ?> (hari)</b>,
             terhitung tanggal <b><?= $datefrom ?> s/d <?= $dateto ?></b>.
         </p>
-        <p style="font-size: 14px; line-height: 1.5; text-align: justify; margin: 2px 0;">
+        <p class="narasi">
             Demikian surat keterangan ini dibuat untuk dipergunakan sebagaimana perlunya.
         </p>
     </div>
@@ -146,6 +202,7 @@
     $tgl_doc = !empty($row->docdate) ? tgl_indo($row->docdate) : date('d/m/Y');
     $fullname = !empty($row->doctby) ? htmlspecialchars($row->doctby) : ( !empty($row->insertby) ? htmlspecialchars($row->insertby) : '_________________' );
     ?>
+    <!-- ══════════ TANDA TANGAN ══════════ -->
     <div class="ttd-wrap">
         <div class="ttd-box">
             <p class="ttd-place">Bahodopi, <?= $tgl_doc ?></p>
@@ -159,8 +216,8 @@
     </div>
 
     <div class="footer">
-        <p style="font-size:9px;color:#999;margin:0;">
-            <em>Dokumen ini diterbitkan secara elektronik. Untuk memverifikasi keaslian surat ini, silakan pindai <strong>QR Code</strong> di atas menggunakan perangkat mobile Anda.</em>
+        <p>
+            Dokumen ini diterbitkan secara elektronik. Untuk memverifikasi keaslian surat ini, silakan pindai <strong>QR Code</strong> di atas menggunakan perangkat mobile Anda.
         </p>
     </div>
 
