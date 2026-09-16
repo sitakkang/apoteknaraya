@@ -61,6 +61,17 @@ $(document).ready(function () {
             },
             {
                 data: null,
+                width: '130px',
+                orderable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    return '<button class="ds-btn-daftar sks-row-btn" data-id="' + row.DT_RowId + '" title="Tambah SKS">' +
+                               '<i class="fa fa-file-text"></i> Tambah SKS' +
+                           '</button>';
+                }
+            },
+            {
+                data: null,
                 width: '80px',
                 orderable: false,
                 className: 'text-center',
@@ -195,6 +206,77 @@ $(document).ready(function () {
                     $('#search_nama').val('');
                 }
                 doSearch();
+            }
+        }, 'json');
+    });
+
+    // --- Tambah SKS dari data pasien ---
+    // Memakai form tambah SKS yang sudah ada (sks/add) dengan data pasien terisi otomatis
+    $('#tabel_patient tbody').on('click', '.sks-row-btn', function () {
+        var id = $(this).data('id');
+        $.get(site_url + 'sks/add_from_patient/' + id, function (html) {
+            showDsModal(
+                '<i class="fa fa-file-text"></i> Tambah SKS',
+                html,
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>' +
+                '<button type="button" class="ds-btn-action ds-btn-green" id="save_sks_btn" style="padding:8px 22px">Simpan</button>',
+                'modal-md'
+            );
+        });
+    });
+
+    $(document).on('click', '#save_sks_btn', function () {
+        var payload = {
+            patient_name: $('#patient_name').val(),
+            company_name: $('#company_name').val(),
+            age:          $('#age').val(),
+            gender:       $('#gender').val(),
+            alamat:       $('#alamat').val(),
+            diagnosa:     $('#diagnosa').val(),
+            terapi:       $('#terapi').val(),
+            datefrom:     $('#datefrom').val(),
+            dateto:       $('#dateto').val(),
+            docdate:      $('#docdate').val(),
+            doctby:       $('#doctby').val(),
+        };
+        if ($('#patient_name').val() == '') {
+            notifNo("Silahkan isi nama pasien");
+            return false;
+        }
+        if ($('#age').val() == '') {
+            notifNo("Silahkan isi umur pasien");
+            return false;
+        }
+        if ($('#gender').val() == '') {
+            notifNo("Silahkan pilih jenis kelamin pasien");
+            return false;
+        }
+        if ($('#doctby').val() == '') {
+            notifNo("Silahkan pilih dokter");
+            return false;
+        }
+        if ($('#diagnosa').val() == '') {
+            notifNo("Silahkan isi diagnosa");
+            return false;
+        }
+        if ($('#alamat').val() == '') {
+            notifNo("Silahkan isi alamat pasien");
+            return false;
+        }
+        if ($('#datefrom').val() == '') {
+            notifNo("Silahkan isi tanggal mulai");
+            return false;
+        }
+        if ($('#dateto').val() == '') {
+            notifNo("Silahkan isi tanggal selesai");
+            return false;
+        }
+        $.post(site_url + 'sks/act_add', payload, function (res) {
+            if (res.status == 1) {
+                notifNo(res.notif);
+            } else if (res.status == 2) {
+                $('#MyModal').modal('hide');
+                notifYesAuto(res.notif);
             }
         }, 'json');
     });

@@ -416,6 +416,26 @@ table.dataTable thead .sorting_desc {
     white-space: nowrap;
 }
 
+/* ─── Single horizontal scrollbar fix ─────────────────
+   DataTables (bootstrap integration) menambahkan kontrol
+   length / filter / info / paginate di dalam .dataTables_wrapper
+   yang dibungkus .row + .col-*.
+   Bootstrap .row memakai margin kiri/kanan -15px sehingga baris
+   kontrol itu menjadi 30px lebih lebar dari card. Akibatnya
+   .ds-wide-table-wrap (overflow-x:auto) ikut menampilkan scrollbar
+   HORIZONTAL KEDUA, padahal tabel sudah punya scrollbar sendiri dari
+   .dataTables_scrollBody (scrollX:true).
+   Netralkan supaya hanya tersisa SATU scrollbar.
+   Padding di-nol-kan juga agar posisi kontrol tetap rata seperti sebelumnya. */
+.ds-wide-table-wrap .dataTables_wrapper > .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+.ds-wide-table-wrap .dataTables_wrapper > .row > [class*="col-"] {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 /* ─── FixedColumns: sync colours with main table ────── */
 /* The cloned table must mirror the main table's row colours exactly. */
 table.dataTable.DTFC_Cloned {

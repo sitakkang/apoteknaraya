@@ -105,6 +105,23 @@ class Sks extends CI_Controller {
     }
 
     /**
+     * Load form tambah SKS dengan data pasien terisi otomatis
+     * Dipanggil dari modul Patient (tombol "Tambah SKS")
+     */
+    public function add_from_patient($id) {
+        $patient = $this->db->get_where('ms_patient', array('id_patient' => intval($id)))->row();
+        if (!$patient) {
+            show_404();
+        }
+
+        $dokter = $this->M_sks->get_all_doctor();
+        $data['dokter']  = $dokter->result();
+        $data['patient'] = $patient;
+
+        $this->load->view($this->dir_v.'add', $data);
+    }
+
+    /**
      * Load form edit SKS (via AJAX ke modal)
      */
     public function edit() {

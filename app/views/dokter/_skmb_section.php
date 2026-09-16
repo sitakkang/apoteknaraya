@@ -56,7 +56,7 @@ $now_tz = new DateTime('now', new DateTimeZone('Asia/Makassar'));
     </div>
     <div class="col-md-6" style="padding: 0 6px;">
         <div class="ds-form-group">
-            <label>Perusahaan Diantar <span class="text-danger">*</span></label>
+            <label>Perusahaan Diantar</label>
             <input type="text" id="skmb_company_name" class="form-control"
                    placeholder="Nama perusahaan" maxlength="200" autocomplete="off"
                    value="<?= $skmb ? htmlspecialchars($skmb->company_name) : htmlspecialchars($row->trans_patient_company) ?>">

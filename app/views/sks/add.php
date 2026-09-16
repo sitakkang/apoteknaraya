@@ -1,6 +1,18 @@
+<?php
+// Prefill data pasien bila form dibuka dari modul Patient (Sks::add_from_patient)
+$pf_name    = isset($patient) ? ($patient->patient_name ?? '') : '';
+$pf_company = isset($patient) ? ($patient->patient_company ?? '') : '';
+$pf_gender  = isset($patient) ? ($patient->patient_gender ?? '') : '';
+$pf_alamat  = isset($patient) ? ($patient->patient_address ?? '') : '';
+$pf_age     = '';
+if (isset($patient) && !empty($patient->patient_bod)) {
+    $pf_age = date_diff(date_create($patient->patient_bod), date_create('now'))->y;
+}
+?>
 <div class="ds-form-group">
     <label>Nama Pasien <span class="text-danger">*</span></label>
     <input type="text" id="patient_name" name="patient_name" class="form-control"
+           value="<?= htmlspecialchars($pf_name) ?>"
            placeholder="Nama lengkap pasien" maxlength="200" autocomplete="off">
 </div>
 
@@ -9,6 +21,7 @@
         <div class="ds-form-group">
             <label>Umur <span class="text-danger">*</span></label>
             <input type="text" id="age" name="age" class="form-control"
+                   value="<?= htmlspecialchars($pf_age) ?>"
                    placeholder="Usia pasien" maxlength="50" autocomplete="off">
         </div>
     </div>
@@ -16,6 +29,7 @@
         <div class="ds-form-group">
             <label>Nama Perusahaan</label>
             <input type="text" id="company_name" name="company_name" class="form-control"
+                   value="<?= htmlspecialchars($pf_company) ?>"
                    placeholder="Nama perusahaan (jika ada)" maxlength="200" autocomplete="off">
         </div>
     </div>
@@ -27,8 +41,8 @@
             <label>Jenis Kelamin <span class="text-danger">*</span></label>
             <select id="gender" name="gender" class="form-control">
                 <option value="">-- Pilih --</option>
-                <option value="L">Laki-laki</option>
-                <option value="P">Perempuan</option>
+                <option value="L" <?= $pf_gender === 'L' ? 'selected' : '' ?>>Laki-laki</option>
+                <option value="P" <?= $pf_gender === 'P' ? 'selected' : '' ?>>Perempuan</option>
             </select>
         </div>
     </div>
@@ -67,7 +81,7 @@
 <div class="ds-form-group">
     <label>Alamat <span class="text-danger">*</span></label>
     <textarea id="alamat" name="alamat" class="form-control" rows="2"
-              placeholder="Alamat lengkap pasien"></textarea>
+              placeholder="Alamat lengkap pasien"><?= htmlspecialchars($pf_alamat) ?></textarea>
 </div>
 
 <hr style="border-color: var(--ds-border); margin: 6px 0 14px;">

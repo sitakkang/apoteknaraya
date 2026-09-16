@@ -59,7 +59,8 @@ class M_diagnosa extends CI_Model {
             $dir = strtoupper($order_dir) === 'DESC' ? 'DESC' : 'ASC';
             $this->db->order_by($columns[$order_col], $dir);
         } else {
-            $this->db->order_by('id_diagnosa', 'DESC');
+            $this->db->order_by('dgn_cat', 'ASC');
+            $this->db->order_by('dgn_name', 'ASC');
         }
     }
 

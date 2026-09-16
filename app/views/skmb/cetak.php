@@ -3,29 +3,29 @@
 <head>
     <title>Cetak SKMB</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 10px; color: #333; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; margin: 0; padding: 10px; color: #333; }
         .header { text-align: center; margin-bottom: 8px; }
         .header h2 { margin: 0; color: #2d6a4f; font-size: 15px; }
         .header p { margin: 1px 0 0; font-size: 10px; color: #666; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table tr td { padding: 2px 6px; vertical-align: top; }
         table tr td:first-child { width: 120px; color: #666; font-weight: 600; }
         table tr td:nth-child(2) { width: 8px; color: #999; }
         .section { margin-bottom: 8px; }
-        .section-title { font-weight: 700; font-size: 12px; color: #2d6a4f; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid #dceee4; }
+        .section-title { font-weight: 700; font-size: 14px; color: #2d6a4f; margin-bottom: 4px; padding-bottom: 2px; border-bottom: 1px solid #dceee4; }
 
         /* Keterangan text */
-        .ket-text { font-size: 12px; line-height: 1.5; text-align: justify; margin: 4px 0; }
+        .ket-text { font-size: 14px; line-height: 1.5; text-align: justify; margin: 4px 0; }
 
         /* Signature block */
         .ttd-wrap { display: flex; justify-content: flex-end; margin-top: 16px; }
         .ttd-box  { text-align: center; min-width: 180px; }
-        .ttd-place { margin: 0 0 2px; font-size: 12px; color: #333; }
-        .ttd-role  { margin: 0 0 2px; font-size: 11px; color: #666; }
+        .ttd-place { margin: 0 0 2px; font-size: 14px; color: #333; }
+        .ttd-role  { margin: 0 0 2px; font-size: 13px; color: #666; }
         .ttd-qr    { margin: 3px 0; }
         .ttd-qr img { width: 60px; height: 60px; display: block; margin: 0 auto; }
-        .ttd-name  { margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #333; border-top: 1px solid #333; padding-top: 4px; display: inline-block; min-width: 160px; }
-        .ttd-nip   { margin: 1px 0 0; font-size: 10px; color: #666; }
+        .ttd-name  { margin: 2px 0 0; font-size: 14px; font-weight: 700; color: #333; border-top: 1px solid #333; padding-top: 4px; display: inline-block; min-width: 160px; }
+        .ttd-nip   { margin: 1px 0 0; font-size: 12px; color: #666; }
 
         .btn-print { display: inline-block; margin-bottom: 8px; padding: 6px 16px; background: #2d6a4f; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
         .btn-print:hover { background: #1b4332; }
@@ -42,18 +42,17 @@
 
     <div class="header">
         <hr style="border:1px solid #2d6a4f;margin:0 0 4px;">
-        <div style="font-size:14px;font-weight:700;color:#2d6a4f;">PRAKTEK DOKTER UMUM</div>
-        <div style="font-size:11px;color:#555;font-weight:600;">dr. Steve Kojongian</div>
-        <div style="font-size:9px;color:#888;margin-top:1px;">
+        <div style="font-size:16px;font-weight:700;color:#2d6a4f;">PRAKTEK DOKTER UMUM</div>
+        <div style="font-size:13px;color:#555;font-weight:600;">dr. Steve Kojongian</div>
+        <div style="font-size:12px;color:#888;margin-top:1px;">
             Jl. Trans Sulawesi, Ds. Bahodopi, Kec Bahodopi, Morowali &nbsp;|&nbsp; Telp. 081342161194
         </div>
         <hr style="border:1px solid #2d6a4f;margin:4px 0 5px;">
-        <h2 style="font-size:15px;margin:0;">SURAT KETERANGAN MENGANTAR BEROBAT</h2>
-        <p style="font-size:10px;margin:0;">No. Dokumen: <?= htmlspecialchars($row->docnumb) ?></p>
+        <h2 style="font-size:17px;margin:0;">SURAT KETERANGAN MENGANTAR BEROBAT</h2>
+        <p style="font-size:15px;margin:0;">No. Dokumen: <?= htmlspecialchars($row->docnumb) ?></p>
     </div>
 
     <div class="section">
-        <div class="section-title">Keterangan</div>
         <p class="ket-text">
             Yang bertanda tangan di bawah ini menerangkan bahwa:
         </p>
@@ -66,29 +65,27 @@
     </div>
 
     <div class="section">
+        <?php
+        $hubungan = htmlspecialchars($row->hubungan);
+        $hubungan_label = '';
+        switch ($hubungan) {
+            case 'SUAMI':    $hubungan_label = 'Suami';    break;
+            case 'ISTRI':    $hubungan_label = 'Istri';    break;
+            case 'ANAK':     $hubungan_label = 'Anak';     break;
+            case 'ORANG TUA':$hubungan_label = 'Orang Tua';break;
+            case 'SAUDARA':  $hubungan_label = 'Saudara';  break;
+            default:         $hubungan_label = $hubungan;   break;
+        }
+        ?>
         <p class="ket-text">
-            Pada tanggal <strong><?= !empty($row->tgl_datang) ? date('d-m-Y', strtotime($row->tgl_datang)) : '-' ?></strong>
-            Jam : <strong><?= htmlspecialchars($row->jam) ?: '-' ?> WITA</strong>.
-            Telah datang ke Praktek Dokter Umum untuk mengantar berobat
-            <?php
-            $hubungan = htmlspecialchars($row->hubungan);
-            $hubungan_label = '';
-            switch ($hubungan) {
-                case 'SUAMI':    $hubungan_label = 'Suami';    break;
-                case 'ISTRI':    $hubungan_label = 'Istri';    break;
-                case 'ANAK':     $hubungan_label = 'Anak';     break;
-                case 'ORANG TUA':$hubungan_label = 'Orang Tua';break;
-                case 'SAUDARA':  $hubungan_label = 'Saudara';  break;
-                default:         $hubungan_label = $hubungan;   break;
-            }
-            ?>
-            <strong><?= $hubungan_label ?: '-' ?></strong>
+            Pada tanggal <strong><?= !empty($row->tgl_datang) ? date('d-m-Y', strtotime($row->tgl_datang)) : '-' ?></strong> benar-benar telah mengantar anggota keluarga yang sakit, yaitu :
         </p>
         
         <table>
             <tr><td>Nama Diantar</td><td>:</td><td><?= htmlspecialchars($row->patient_name) ?></td></tr>
             <tr><td>NIK Diantar</td><td>:</td><td><?= htmlspecialchars($row->nik) ?: '-' ?></td></tr>
             <tr><td>Perusahaan</td><td>:</td><td><?= htmlspecialchars($row->company_name) ?: '-' ?></td></tr>
+            <tr><td>Hubungan</td><td>:</td><td><?= $hubungan_label ?: '-' ?></td></tr>
         </table>
 
 
