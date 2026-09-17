@@ -109,7 +109,15 @@ Yang **tidak boleh** ikut ter-commit (sudah otomatis diabaikan `.gitignore`):
 
 ## 3. Siapkan akses GitHub dari server
 
-Repo private → server butuh kunci akses. Pilih salah satu.
+Repo private → server butuh kunci akses. Pilih sesuai fasilitas akun DomaiNesia Anda:
+
+| Kondisi akun | Cara clone yang bisa dipakai |
+|---|---|
+| Ada **cPanel » Advanced » Terminal** atau akses SSH | **Deploy key** (Bagian 3.1) — paling aman & disarankan |
+| Tidak ada Terminal/SSH | 1) minta support DomaiNesia mengaktifkan SSH/Terminal (sarankan), atau 2) URL HTTPS + token (Bagian 3.2), atau 3) jadikan repo **public** setelah riwayat dibersihkan dulu (Bagian 1), lalu pakai URL HTTPS biasa |
+
+> Catatan resmi cPanel: tanpa akses shell/Terminal, cPanel hanya bisa *create, clone, delete, view* repository.
+> Untuk repo **private** cPanel mensyaratkan fitur **SSH Access & Terminal** (generate SSH key + deploy key).
 
 ### 3.1 Deploy Key (rekomendasi, read-only)
 
@@ -130,25 +138,33 @@ Repo private → server butuh kunci akses. Pilih salah satu.
 
 ## 4. CARA A — Clone langsung ke `public_html` (paling singkat)
 
-1. Backup dulu isi `public_html` bila sudah ada file (cPanel → **File Manager** → zip / download).
-   Folder **harus kosong** (sisakan `cgi-bin` bila ada).
-2. cPanel → **Files → Git™ Version Control** → **Create**.
-3. Isi form:
+Syarat dari cPanel: **direktori tujuan harus kosong** (kalau belum ada, cPanel akan membuatnya).
+
+1. Backup dulu isi `public_html` bila sudah ada file (cPanel → **File Manager** → pilih semua → **Compress** → download).
+2. `public_html` biasanya sudah berisi folder `cgi-bin` (dan kadang `.well-known`). cPanel **menolak** clone
+   bila dua folder itu masih ada → pindahkan sementara ke `/home/USERCPANEL/sementara/`.
+   Setelah clone selesai, `cgi-bin` boleh dikembalikan (`.well-known` dibiarkan di lokasi aslinya).
+3. cPanel → **Files → Git™ Version Control** → **Create**.
+4. Isi form:
 
    | Field | Isi |
    |---|---|
-   | **Clone URL** | `git@github.com:sitakkang/apoteknaraya.git` (atau URL HTTPS + token) |
+   | **Clone a Repository** | ON (toggle aktif) |
+   | **Clone URL** | `git@github.com:sitakkang/apoteknaraya.git` (SSH + deploy key) atau URL HTTPS + token |
    | **Repository Path** | `public_html` |
    | **Repository Name** | `apoteknaraya` |
 
-4. Klik **Create**. cPanel men-clone seluruh isi repo ke `public_html`.
-5. Sudah otomatis aktif di `https://apotek-naraya.com` — lanjut ke **Bagian 7** (setup wajib).
+5. Klik **Create**. Kalau muncul **SSH host key verification**, klik **Save and Continue** (menyimpan host key `github.com`).
+   cPanel men-clone seluruh isi repo ke `public_html`.
+6. Verifikasi lewat File Manager: `public_html/index.php`, `public_html/app/`, `.htaccess` sudah ada.
+7. Sudah otomatis aktif di `https://apotek-naraya.com` — lanjut ke **Bagian 7** (setup wajib).
 
-> Kalau cPanel menolak (`The repository path must be an empty directory` / path di dalam document root tidak diizinkan),
-> gunakan **Cara B** di bawah — hasil akhirnya sama.
+> Kalau cPanel menolak (`The repository path must be empty` / kredensial di URL tidak diterima),
+> gunakan **Cara B** di bawah — hasil akhirnya sama, dan tetap **tanpa upload file**.
 >
 > ⚠️ Di Cara A, jangan klik **Deploy HEAD Commit** kecuali Anda memang sudah membuat `.cpanel.yml`
 > (lihat Cara B), karena tombol itu menjalankan file tersebut.
+> Untuk menarik perubahan berikutnya cukup klik **Update from Remote**.
 
 ---
 
