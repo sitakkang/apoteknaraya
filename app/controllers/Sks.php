@@ -76,12 +76,11 @@ class Sks extends CI_Controller {
                 '0'         => $i++,
                 '1'         => htmlspecialchars($row->patient_name),
                 '2'         => $gender,
-                '3'         => htmlspecialchars($row->company_name),
-                '4'         => htmlspecialchars($row->diagnosa),
-                '5'         => htmlspecialchars($row->docnumb),
-                '6'         => !empty($row->docdate) ? date('d/m/Y', strtotime($row->docdate)) : '-',
-                '7'         => !empty($row->datefrom) ? date('d/m/Y', strtotime($row->datefrom)) : '-',
-                '8'         => !empty($row->dateto) ? date('d/m/Y', strtotime($row->dateto)) : '-',
+                '3'         => htmlspecialchars($row->diagnosa),
+                '4'         => htmlspecialchars($row->docnumb),
+                '5'         => !empty($row->docdate) ? date('d/m/Y', strtotime($row->docdate)) : '-',
+                '6'         => !empty($row->datefrom) ? date('d/m/Y', strtotime($row->datefrom)) : '-',
+                '7'         => !empty($row->dateto) ? date('d/m/Y', strtotime($row->dateto)) : '-',
             );
         }
 
@@ -174,7 +173,7 @@ class Sks extends CI_Controller {
 
         $data = array(
             'patient_name' => strtoupper(trim($this->input->post('patient_name'))),
-            'company_name' => strtoupper(trim($this->input->post('company_name'))),
+            'patient_nik'  => trim($this->input->post('patient_nik')),
             'patient_job'  => $patient_job ?: 'KARYAWAN',
             'age'          => trim($this->input->post('age')),
             'gender'       => $this->input->post('gender'),
@@ -214,7 +213,7 @@ class Sks extends CI_Controller {
 
         $data = array(
             'patient_name' => strtoupper(trim($this->input->post('patient_name'))),
-            'company_name' => strtoupper(trim($this->input->post('company_name'))),
+            'patient_nik'  => trim($this->input->post('patient_nik')),
             'patient_job'  => $patient_job ?: 'KARYAWAN',
             'age'          => trim($this->input->post('age')),
             'gender'       => $this->input->post('gender'),

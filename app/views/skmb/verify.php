@@ -185,10 +185,6 @@
                     <div class="v-value"><?= htmlspecialchars($row->nik) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
                 </div>
                 <div class="v-row">
-                    <div class="v-label">Perusahaan</div>
-                    <div class="v-value"><?= htmlspecialchars($row->company_name) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
-                </div>
-                <div class="v-row">
                     <div class="v-label">Hubungan</div>
                     <div class="v-value"><?= htmlspecialchars($row->hubungan) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
                 </div>
@@ -201,10 +197,6 @@
                 <div class="v-row">
                     <div class="v-label">NIK Pengantar</div>
                     <div class="v-value"><?= htmlspecialchars($row->nik_pengantar) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
-                </div>
-                <div class="v-row">
-                    <div class="v-label">Perush. Pengantar</div>
-                    <div class="v-value"><?= htmlspecialchars($row->company_pengantar) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
                 </div>
             </div>
 

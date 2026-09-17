@@ -67,11 +67,10 @@ class Skbs extends CI_Controller {
                 '0'             => $i++,
                 '1'             => htmlspecialchars($row->skbs_patient_name),
                 '2'             => htmlspecialchars($row->skbs_patient_nik),
-                '3'             => htmlspecialchars($row->skbs_patient_company),
-                '4'             => htmlspecialchars($row->skbs_patient_department),
-                '5'             => htmlspecialchars($row->skbs_result_name),
-                '6'             => htmlspecialchars($row->skbs_doct_name),
-                '7'             => !empty($row->skbs_doc_date) ? date('d/m/Y', strtotime($row->skbs_doc_date)) : '-',
+                '3'             => htmlspecialchars($row->skbs_patient_department),
+                '4'             => htmlspecialchars($row->skbs_result_name),
+                '5'             => htmlspecialchars($row->skbs_doct_name),
+                '6'             => !empty($row->skbs_doc_date) ? date('d/m/Y', strtotime($row->skbs_doc_date)) : '-',
             );
         }
 

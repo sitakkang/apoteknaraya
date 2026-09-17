@@ -41,9 +41,8 @@ $(document).ready(function () {
             },
             { data: '3', className: 'text-center' },
             { data: '4' },
-            { data: '5' },
+            { data: '5', className: 'text-center' },
             { data: '6', className: 'text-center' },
-            { data: '7', className: 'text-center' },
             {
                 data: null,
                 width: '120px',
@@ -169,7 +168,7 @@ $(document).ready(function () {
             patient_name:        $('#patient_name').val(),
             patient_gender:      $('#patient_gender').val(),
             patient_nik:         $('#patient_nik').val(),
-            patient_company:     $('#patient_company').val(),
+
             patient_job:  $('#patient_job').val(),
             patient_ktp:         $('#patient_ktp').val(),
             patient_bod:         $('#patient_bod').val(),
@@ -230,7 +229,7 @@ $(document).ready(function () {
     $(document).on('click', '#save_sks_btn', function () {
         var payload = {
             patient_name: $('#patient_name').val(),
-            company_name: $('#company_name').val(),
+            patient_nik:  $('#sks_nik').val(),
             age:          $('#age').val(),
             gender:       $('#gender').val(),
             alamat:       $('#alamat').val(),
@@ -316,7 +315,7 @@ $(document).ready(function () {
             patient_name:        $('#edit_patient_name').val(),
             patient_gender:      $('#edit_patient_gender').val(),
             patient_nik:         $('#edit_patient_nik').val(),
-            patient_company:     $('#edit_patient_company').val(),
+
             patient_job:  $('#edit_patient_job').val(),
             patient_ktp:         $('#edit_patient_ktp').val(),
             patient_bod:         $('#edit_patient_bod').val(),

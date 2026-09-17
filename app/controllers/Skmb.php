@@ -69,12 +69,11 @@ class Skmb extends CI_Controller {
                 '0'         => $i++,
                 '1'         => htmlspecialchars($row->patient_name),
                 '2'         => htmlspecialchars($row->nik),
-                '3'         => htmlspecialchars($row->company_name),
-                '4'         => htmlspecialchars($row->pengantar),
-                '5'         => !empty($row->tgl_datang) ? date('d/m/Y', strtotime($row->tgl_datang)) : '-',
-                '6'         => htmlspecialchars($row->jam),
-                '7'         => htmlspecialchars($row->docnumb),
-                '8'         => !empty($row->docdate) ? date('d/m/Y', strtotime($row->docdate)) : '-',
+                '3'         => htmlspecialchars($row->pengantar),
+                '4'         => !empty($row->tgl_datang) ? date('d/m/Y', strtotime($row->tgl_datang)) : '-',
+                '5'         => htmlspecialchars($row->jam),
+                '6'         => htmlspecialchars($row->docnumb),
+                '7'         => !empty($row->docdate) ? date('d/m/Y', strtotime($row->docdate)) : '-',
             );
         }
 
@@ -133,10 +132,8 @@ class Skmb extends CI_Controller {
         $data = array(
             'patient_name'    => strtoupper(trim($this->input->post('patient_name'))),
             'nik'             => trim($this->input->post('nik')),
-            'company_name'    => strtoupper(trim($this->input->post('company_name'))),
             'pengantar'       => strtoupper(trim($this->input->post('pengantar'))),
             'nik_pengantar'   => trim($this->input->post('nik_pengantar')),
-            'company_pengantar' => strtoupper(trim($this->input->post('company_pengantar'))),
             'hubungan'        => $this->input->post('hubungan'),
             'tgl_datang'      => $this->format_date_db($this->input->post('tgl_datang')),
             'jam'             => trim($this->input->post('jam')),
@@ -167,10 +164,8 @@ class Skmb extends CI_Controller {
         $data = array(
             'patient_name'    => strtoupper(trim($this->input->post('patient_name'))),
             'nik'             => trim($this->input->post('nik')),
-            'company_name'    => strtoupper(trim($this->input->post('company_name'))),
             'pengantar'       => strtoupper(trim($this->input->post('pengantar'))),
             'nik_pengantar'   => trim($this->input->post('nik_pengantar')),
-            'company_pengantar' => strtoupper(trim($this->input->post('company_pengantar'))),
             'hubungan'        => $this->input->post('hubungan'),
             'tgl_datang'      => $this->format_date_db($this->input->post('tgl_datang')),
             'jam'             => trim($this->input->post('jam')),

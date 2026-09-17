@@ -132,7 +132,6 @@
             <tr><td class="label">Nama</td><td class="pemisah">:</td><td><strong><?= htmlspecialchars($row->skbs_patient_name) ?></strong></td></tr>
             <tr><td class="label">Umur</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->skbs_patient_age ?: '-') ?> Tahun</td></tr>
             <tr><td class="label">NIK</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->skbs_patient_nik ?: '-') ?></td></tr>
-            <tr><td class="label">Perusahaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->skbs_patient_company ?: '-') ?></td></tr>
         </table>
     </div>
 

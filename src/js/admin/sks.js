@@ -36,12 +36,11 @@ $(document).ready(function () {
             { data: '0', width: '40px', orderable: false, searchable: false },
             { data: '1'},
             { data: '2', className: 'text-center' },
-            { data: '3', className: 'text-center' },
-            { data: '4'},
+            { data: '3'},
+            { data: '4', className: 'text-center' },
             { data: '5', className: 'text-center' },
             { data: '6', className: 'text-center' },
             { data: '7', className: 'text-center' },
-            { data: '8', className: 'text-center' },
             {
                 data: null,
                 width: '120px',
@@ -134,7 +133,7 @@ $(document).ready(function () {
         var payload = {
             id:           $('#edit_id').val(),
             patient_name: $('#edit_patient_name').val(),
-            company_name: $('#edit_company_name').val(),
+            patient_nik:  $('#edit_sks_nik').val(),
             age:          $('#edit_age').val(),
             gender:       $('#edit_gender').val(),
             alamat:       $('#edit_alamat').val(),

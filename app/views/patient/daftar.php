@@ -18,10 +18,6 @@
                         <span class="ds-detail-value"><?= htmlspecialchars($row->patient_name) ?></span>
                     </div>
                     <div class="ds-detail-field">
-                        <span class="ds-detail-label">Perusahaan</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->patient_company) ?: '<span class="text-muted">-</span>' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
                         <span class="ds-detail-label">Telepon</span>
                         <span class="ds-detail-value"><?= htmlspecialchars($row->patient_phone) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>

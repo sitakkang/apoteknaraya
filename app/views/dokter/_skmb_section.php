@@ -18,20 +18,12 @@ $now_tz = new DateTime('now', new DateTimeZone('Asia/Makassar'));
 </div>
 
 <div class="row" style="margin: 0 -6px;">
-    <div class="col-md-6" style="padding: 0 6px;">
+    <div class="col-md-12" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>NIK Pengantar</label>
             <input type="text" id="skmb_nik_pengantar" class="form-control"
                    placeholder="NIK pengantar" maxlength="20" autocomplete="off"
                    value="<?= $skmb ? htmlspecialchars($skmb->nik_pengantar) : '' ?>">
-        </div>
-    </div>
-    <div class="col-md-6" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Perusahaan Pengantar</label>
-            <input type="text" id="skmb_company_pengantar" class="form-control"
-                   placeholder="Perusahaan pengantar" maxlength="20" autocomplete="off"
-                   value="<?= $skmb ? htmlspecialchars($skmb->company_pengantar) : '' ?>">
         </div>
     </div>
 </div>
@@ -46,20 +38,12 @@ $now_tz = new DateTime('now', new DateTimeZone('Asia/Makassar'));
 </div>
 
 <div class="row" style="margin: 0 -6px;">
-    <div class="col-md-6" style="padding: 0 6px;">
+    <div class="col-md-12" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>NIK Diantar</label>
             <input type="text" id="skmb_nik" class="form-control"
                    placeholder="Nomor induk karyawan" maxlength="50" autocomplete="off"
                    value="<?= $skmb ? htmlspecialchars($skmb->nik) : htmlspecialchars($row->patient_nik) ?>">
-        </div>
-    </div>
-    <div class="col-md-6" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Perusahaan Diantar</label>
-            <input type="text" id="skmb_company_name" class="form-control"
-                   placeholder="Nama perusahaan" maxlength="200" autocomplete="off"
-                   value="<?= $skmb ? htmlspecialchars($skmb->company_name) : htmlspecialchars($row->trans_patient_company) ?>">
         </div>
     </div>
 </div>

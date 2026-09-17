@@ -189,10 +189,6 @@
                     <div class="v-value"><?= htmlspecialchars($row->skbs_patient_name) ?></div>
                 </div>
                 <div class="v-row">
-                    <div class="v-label">Perusahaan</div>
-                    <div class="v-value"><?= htmlspecialchars($row->skbs_patient_company) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
-                </div>
-                <div class="v-row">
                     <div class="v-label">Departemen</div>
                     <div class="v-value"><?= htmlspecialchars($row->skbs_patient_department) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
                 </div>

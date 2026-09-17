@@ -65,7 +65,6 @@
                             <th width="80" class="text-center">JK</th>
                             <th width="150" class="text-center">KTP</th>
                             <th width="90" class="text-center">NIK</th>
-                            <th width="80" class="text-center">Perusahaan</th>
                             <th width="100" class="text-center">No. Telepon</th>
                             <th width="80" class="text-center">Status</th>
                             <th width="120" class="text-center">Aksi</th>

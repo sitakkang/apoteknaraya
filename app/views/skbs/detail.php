@@ -27,10 +27,6 @@
                         <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_patient_ktp) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>
                     <div class="ds-detail-field">
-                        <span class="ds-detail-label">Perusahaan</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_patient_company) ?: '<span class="text-muted">-</span>' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
                         <span class="ds-detail-label">Departemen</span>
                         <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_patient_department) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>

@@ -5,18 +5,11 @@
 </div>
 
 <div class="row" style="margin: 0 -6px;">
-    <div class="col-md-6" style="padding: 0 6px;">
+    <div class="col-md-12" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>NIK Pengantar</label>
             <input type="text" id="nik_pengantar" name="nik_pengantar" class="form-control"
                    placeholder="NIK pengantar" maxlength="20" autocomplete="off">
-        </div>
-    </div>
-    <div class="col-md-6" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Perusahaan Pengantar</label>
-            <input type="text" id="company_pengantar" name="company_pengantar" class="form-control"
-                   placeholder="Perusahaan pengantar" maxlength="20" autocomplete="off">
         </div>
     </div>
 </div>
@@ -30,18 +23,11 @@
 </div>
 
 <div class="row" style="margin: 0 -6px;">
-    <div class="col-md-6" style="padding: 0 6px;">
+    <div class="col-md-12" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>NIK Diantar</label>
             <input type="text" id="nik" name="nik" class="form-control"
                    placeholder="Nomor induk karyawan" maxlength="50" autocomplete="off">
-        </div>
-    </div>
-    <div class="col-md-6" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Perusahaan Diantar</label>
-            <input type="text" id="company_name" name="company_name" class="form-control"
-                   placeholder="Nama perusahaan" maxlength="200" autocomplete="off">
         </div>
     </div>
 </div>

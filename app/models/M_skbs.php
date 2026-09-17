@@ -44,11 +44,10 @@ class M_skbs extends CI_Model {
         $columns = array(
             1 => 'skbs_patient_name',
             2 => 'skbs_patient_nik',
-            3 => 'skbs_patient_company',
-            4 => 'skbs_patient_department',
-            5 => 'skbs_result_name',
-            6 => 'skbs_doct_name',
-            7 => 'skbs_doc_date',
+            3 => 'skbs_patient_department',
+            4 => 'skbs_result_name',
+            5 => 'skbs_doct_name',
+            6 => 'skbs_doc_date',
         );
 
         $this->db->from($this->table);
@@ -58,7 +57,6 @@ class M_skbs extends CI_Model {
             $this->db->group_start();
             $this->db->like('skbs_patient_name', $search);
             $this->db->or_like('skbs_patient_nik', $search);
-            $this->db->or_like('skbs_patient_company', $search);
             $this->db->or_like('skbs_patient_department', $search);
             $this->db->or_like('skbs_result_name', $search);
             $this->db->or_like('skbs_doct_name', $search);

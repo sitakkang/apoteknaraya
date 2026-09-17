@@ -22,14 +22,7 @@
 </div>
 
 <div class="row" style="margin: 0 -6px;">
-    <div class="col-md-6" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Perusahaan</label>
-            <input type="text" id="patient_company" name="patient_company" class="form-control"
-                   placeholder="Nama perusahaan" maxlength="100" autocomplete="off">
-        </div>
-    </div>
-    <div class="col-md-6" style="padding: 0 6px;">
+    <div class="col-md-12" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>Pekerjaan</label>
             <input type="text" id="patient_job" name="patient_job" class="form-control"

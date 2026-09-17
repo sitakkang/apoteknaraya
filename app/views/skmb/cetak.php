@@ -120,7 +120,6 @@
         <table class="data">
             <tr><td class="label">Nama Pengantar</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->pengantar) ?: '-' ?></td></tr>
             <tr><td class="label">NIK Pengantar</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->nik_pengantar) ?: '-' ?></td></tr>
-            <tr><td class="label">Perusahaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->company_pengantar) ?: '-' ?></td></tr>
         </table>
     </div>
 
@@ -144,7 +143,6 @@
         <table class="data">
             <tr><td class="label">Nama Diantar</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->patient_name) ?></td></tr>
             <tr><td class="label">NIK Diantar</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->nik) ?: '-' ?></td></tr>
-            <tr><td class="label">Perusahaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->company_name) ?: '-' ?></td></tr>
             <tr><td class="label">Hubungan</td><td class="pemisah">:</td><td><?= $hubungan_label ?: '-' ?></td></tr>
         </table>
 

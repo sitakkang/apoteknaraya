@@ -23,10 +23,6 @@
                         <span class="ds-detail-value"><?php if ($row->gender === 'L'): ?><span class="ds-badge ds-badge-blue">Laki-laki</span><?php elseif ($row->gender === 'P'): ?><span class="ds-badge ds-badge-pink">Perempuan</span><?php else: ?><span class="text-muted">-</span><?php endif; ?></span>
                     </div>
                     <div class="ds-detail-field">
-                        <span class="ds-detail-label">Perusahaan</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->company_name) ?: '<span class="text-muted">-</span>' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
                         <span class="ds-detail-label">Pekerjaan</span>
                         <span class="ds-detail-value"><?= htmlspecialchars($row->patient_job) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>

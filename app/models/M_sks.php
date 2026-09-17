@@ -43,12 +43,11 @@ class M_sks extends CI_Model {
         $columns = array(
             1 => 'patient_name',
             2 => 'gender',
-            3 => 'company_name',
-            4 => 'diagnosa',
-            5 => 'docnumb',
-            6 => 'docdate',
-            7 => 'datefrom',
-            8 => 'dateto',
+            3 => 'diagnosa',
+            4 => 'docnumb',
+            5 => 'docdate',
+            6 => 'datefrom',
+            7 => 'dateto',
         );
 
         $this->db->from($this->table);
@@ -56,7 +55,6 @@ class M_sks extends CI_Model {
         if (!empty($search)) {
             $this->db->group_start();
             $this->db->like('patient_name', $search);
-            $this->db->or_like('company_name', $search);
             $this->db->or_like('patient_job', $search);
             $this->db->or_like('diagnosa', $search);
             $this->db->or_like('docnumb', $search);
@@ -92,12 +90,38 @@ class M_sks extends CI_Model {
 
     public function get_sks_by_id($id) {
         $this->db->select('sks.*, doctor.fullname AS fullname, doctor.nip AS nip, creator.fullname AS insert_name, updater.fullname AS update_name');
+        // Ambil juga NIK dari data kunjungan (trans_visit -> ms_patient) sebagai cadangan
+        // untuk SKS lama yang belum menyimpan patient_nik.
+        $this->db->select('(SELECT p.patient_nik FROM trans_visit v INNER JOIN ms_patient p ON p.id_patient = v.patient_id WHERE v.id_visit = sks.visit_id AND p.patient_nik IS NOT NULL AND p.patient_nik <> "" LIMIT 1) AS patient_nik_visit', FALSE);
         $this->db->from('sks');
         $this->db->join('conf_users AS doctor', 'sks.doctby = doctor.id_user', 'left');
         $this->db->join('conf_users AS creator', 'sks.insertby = creator.id_user', 'left');
         $this->db->join('conf_users AS updater', 'sks.updateby = updater.id_user', 'left');
         $this->db->where('sks.id', $id);
-        return $this->db->get()->row();
+
+        $row = $this->db->get()->row();
+        if ($row && empty($row->patient_nik)) {
+            $row->patient_nik = !empty($row->patient_nik_visit)
+                ? $row->patient_nik_visit
+                : $this->get_patient_nik_by_name($row->patient_name);
+        }
+        return $row;
+    }
+
+    /**
+     * Ambil NIK dari master pasien berdasarkan nama.
+     * Hanya dipakai sebagai cadangan (SKS lama) dan hanya bila nama pasien unik,
+     * supaya tidak salah orang.
+     */
+    public function get_patient_nik_by_name($name) {
+        if (empty($name)) return '';
+        $rows = $this->db->query(
+            'SELECT patient_nik FROM ms_patient
+             WHERE patient_name = ? AND patient_nik IS NOT NULL AND patient_nik <> ""
+             ORDER BY id_patient DESC LIMIT 2',
+            array(strtoupper(trim($name)))
+        )->result();
+        return (count($rows) === 1) ? $rows[0]->patient_nik : '';
     }
 
     /**

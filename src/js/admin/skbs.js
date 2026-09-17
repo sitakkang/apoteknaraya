@@ -24,8 +24,7 @@ $(document).ready(function () {
             { data: '3'},
             { data: '4'},
             { data: '5', className: 'text-center' },
-            { data: '6'},
-            { data: '7', className: 'text-center' },
+            { data: '6', className: 'text-center' },
             {
                 data: null,
                 width: '100px',

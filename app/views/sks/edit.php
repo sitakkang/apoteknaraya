@@ -16,9 +16,9 @@
     </div>
     <div class="col-md-6" style="padding: 0 6px;">
         <div class="ds-form-group">
-            <label>Nama Perusahaan</label>
-            <input type="text" id="edit_company_name" name="company_name" class="form-control"
-                   value="<?= htmlspecialchars($row->company_name) ?>" placeholder="Nama perusahaan (jika ada)" maxlength="200" autocomplete="off">
+            <label>NIK</label>
+            <input type="text" id="edit_sks_nik" name="patient_nik" class="form-control"
+                   value="<?= htmlspecialchars((string) $row->patient_nik) ?>" placeholder="NIK / Nomor Induk Karyawan" maxlength="50" autocomplete="off">
         </div>
     </div>
 </div>

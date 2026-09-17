@@ -82,9 +82,8 @@ class Patient extends CI_Controller {
                 'jk'        => $row->patient_gender,
                 '3'         => htmlspecialchars($row->patient_ktp),
                 '4'         => htmlspecialchars($row->patient_nik),
-                '5'         => htmlspecialchars($row->patient_company),
-                '6'         => htmlspecialchars($row->patient_phone),
-                '7'         => $status,
+                '5'         => htmlspecialchars($row->patient_phone),
+                '6'         => $status,
             );
         }
 
@@ -157,7 +156,6 @@ class Patient extends CI_Controller {
             'patient_code'        => $this->M_patient->generate_patient_code(),
             'patient_name'        => strtoupper(trim($this->input->post('patient_name'))),
             'patient_nik'         => $nik,
-            'patient_company'     => strtoupper(trim($this->input->post('patient_company'))),
             'patient_job'         => strtoupper(trim($this->input->post('patient_job'))),
             'patient_ktp'         => $ktp,
             'patient_gender'      => $this->input->post('patient_gender'),
@@ -188,7 +186,6 @@ class Patient extends CI_Controller {
         $data = array(
             'patient_name'        => strtoupper(trim($this->input->post('patient_name'))),
             'patient_nik'         => trim($this->input->post('patient_nik')),
-            'patient_company'     => strtoupper(trim($this->input->post('patient_company'))),
             'patient_job'         => strtoupper(trim($this->input->post('patient_job'))),
             'patient_ktp'         => trim($this->input->post('patient_ktp')),
             'patient_gender'      => $this->input->post('patient_gender'),

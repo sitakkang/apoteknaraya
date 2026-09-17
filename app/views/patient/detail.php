@@ -42,18 +42,14 @@
             </div>
         </div>
 
-        <!-- Company Info -->
+        <!-- Info Pekerjaan -->
         <div class="ds-detail-card ds-detail-doc">
             <div class="ds-detail-card-hd">
-                <span class="ds-detail-icon"><i class="fa fa-building"></i></span>
-                <span>Perusahaan</span>
+                <span class="ds-detail-icon"><i class="fa fa-briefcase"></i></span>
+                <span>Pekerjaan &amp; Status</span>
             </div>
             <div class="ds-detail-card-bd">
                 <div class="ds-detail-grid-2col">
-                    <div class="ds-detail-field">
-                        <span class="ds-detail-label">Perusahaan</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->patient_company) ?: '<span class="text-muted">-</span>' ?></span>
-                    </div>
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">Pekerjaan</span>
                         <span class="ds-detail-value"><?= htmlspecialchars($row->patient_job) ?: '<span class="text-muted">-</span>' ?></span>

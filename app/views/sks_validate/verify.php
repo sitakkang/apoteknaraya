@@ -243,10 +243,6 @@
                     <div class="v-value"><?= htmlspecialchars($row->patient_name) ?></div>
                 </div>
                 <div class="v-row">
-                    <div class="v-label">Perusahaan</div>
-                    <div class="v-value"><?= htmlspecialchars($row->company_name) ?: '<span style="color:#b7d5c4">—</span>' ?></div>
-                </div>
-                <div class="v-row">
                     <div class="v-label">Umur</div>
                     <div class="v-value"><?= htmlspecialchars($row->age) ?: '<span style="color:#b7d5c4">—</span>' ?> Tahun</div>
                 </div>

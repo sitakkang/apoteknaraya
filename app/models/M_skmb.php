@@ -43,12 +43,11 @@ class M_skmb extends CI_Model {
         $columns = array(
             1 => 'patient_name',
             2 => 'nik',
-            3 => 'company_name',
-            4 => 'pengantar',
-            5 => 'tgl_datang',
-            6 => 'jam',
-            7 => 'docnumb',
-            8 => 'docdate',
+            3 => 'pengantar',
+            4 => 'tgl_datang',
+            5 => 'jam',
+            6 => 'docnumb',
+            7 => 'docdate',
         );
 
         $this->db->from($this->table);
@@ -57,7 +56,6 @@ class M_skmb extends CI_Model {
             $this->db->group_start();
             $this->db->like('patient_name', $search);
             $this->db->or_like('nik', $search);
-            $this->db->or_like('company_name', $search);
             $this->db->or_like('pengantar', $search);
             $this->db->or_like('docnumb', $search);
             $this->db->group_end();

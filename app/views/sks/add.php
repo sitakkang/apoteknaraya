@@ -1,7 +1,7 @@
 <?php
 // Prefill data pasien bila form dibuka dari modul Patient (Sks::add_from_patient)
 $pf_name    = isset($patient) ? ($patient->patient_name ?? '') : '';
-$pf_company = isset($patient) ? ($patient->patient_company ?? '') : '';
+$pf_nik     = isset($patient) ? ($patient->patient_nik ?? '') : '';
 $pf_gender  = isset($patient) ? ($patient->patient_gender ?? '') : '';
 $pf_alamat  = isset($patient) ? ($patient->patient_address ?? '') : '';
 $pf_age     = '';
@@ -27,10 +27,10 @@ if (isset($patient) && !empty($patient->patient_bod)) {
     </div>
     <div class="col-md-6" style="padding: 0 6px;">
         <div class="ds-form-group">
-            <label>Nama Perusahaan</label>
-            <input type="text" id="company_name" name="company_name" class="form-control"
-                   value="<?= htmlspecialchars($pf_company) ?>"
-                   placeholder="Nama perusahaan (jika ada)" maxlength="200" autocomplete="off">
+            <label>NIK</label>
+            <input type="text" id="sks_nik" name="patient_nik" class="form-control"
+                   value="<?= htmlspecialchars($pf_nik) ?>"
+                   placeholder="NIK / Nomor Induk Karyawan" maxlength="50" autocomplete="off">
         </div>
     </div>
 </div>

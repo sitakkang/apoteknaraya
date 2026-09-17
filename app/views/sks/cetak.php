@@ -127,9 +127,9 @@
         <div class="section-title"><span class="angka">I.</span>Identitas Pasien</div>
         <table class="data">
             <tr><td class="label">Nama Pasien</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->patient_name) ?></td></tr>
+            <tr><td class="label">NIK</td><td class="pemisah">:</td><td><?= htmlspecialchars((string) $row->patient_nik) ?: '-' ?></td></tr>
             <tr><td class="label">Umur</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->age) ?: '-' ?> Tahun</td></tr>
             <tr><td class="label">Jenis Kelamin</td><td class="pemisah">:</td><td><?= $row->gender === 'L' ? 'Laki-laki' : ($row->gender === 'P' ? 'Perempuan' : '-') ?></td></tr>
-            <tr><td class="label">Perusahaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->company_name) ?: '-' ?></td></tr>
             <tr><td class="label">Pekerjaan</td><td class="pemisah">:</td><td><?= htmlspecialchars($row->patient_job) ?: '-' ?></td></tr>
         </table>
     </div>
