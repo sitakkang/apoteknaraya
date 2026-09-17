@@ -517,4 +517,15 @@ $(document).ready(function () {
         });
     });
 
+    // ================================================================
+    // Cetak dokumen (SKS / SKBS / SKMB)
+    // URL mengikuti halaman pemanggil: 'dokter/' atau 'anamnesa/'.
+    // ================================================================
+    $(document).on('click', '.btn-cetak-doc', function (e) {
+        e.preventDefault();
+        var path = $(this).data('path');
+        if (!path) { notifNo('Dokumen tidak ditemukan'); return false; }
+        window.open(examUrl(path), '_blank');
+    });
+
 });

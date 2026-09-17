@@ -86,9 +86,9 @@
                 <td class="text-center" style="vertical-align: top;"><?= !empty($s->docdate) ? date('d/m/Y', strtotime($s->docdate)) : '-' ?></td>
                 <td class="text-center" style="vertical-align: top;"><?= !empty($s->datefrom) ? date('d/m/Y', strtotime($s->datefrom)) : '-' ?> s/d <?= !empty($s->dateto) ? date('d/m/Y', strtotime($s->dateto)) : '-' ?></td>
                 <td class="text-center" style="vertical-align: top;">
-                    <a href="<?= site_url('dokter/cetak_sks/' . $s->id) ?>" target="_blank" class="ds-act-btn ds-act-print" title="Cetak SKS" style="display:inline-flex;padding:3px 8px;">
+                    <button type="button" class="ds-act-btn ds-act-print btn-cetak-doc" data-path="cetak_sks/<?= $s->id ?>" title="Cetak SKS" style="padding:3px 8px;">
                         <i class="fa fa-print"></i>
-                    </a>
+                    </button>
                     <button class="ds-act-btn ds-act-delete del-sks-btn" data-id="<?= $s->id ?>" style="padding:3px 8px;" title="Hapus SKS">
                         <i class="fa fa-trash"></i>
                     </button>

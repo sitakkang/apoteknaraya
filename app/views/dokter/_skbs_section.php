@@ -120,9 +120,9 @@ function toggleSkbsDesc(el) {
                 <td><?= htmlspecialchars($skbs->skbs_bb) ?: '-' ?> kg</td>
                 <td><?= htmlspecialchars($skbs->skbs_bw) ?: '-' ?></td>
                 <td class="text-center">
-                    <a href="<?= site_url('dokter/cetak_skbs/' . $skbs->id_skbs) ?>" target="_blank" class="ds-act-btn ds-act-print" title="Cetak SKBS" style="display:inline-flex;padding:3px 8px;">
+                    <button type="button" class="ds-act-btn ds-act-print btn-cetak-doc" data-path="cetak_skbs/<?= $skbs->id_skbs ?>" title="Cetak SKBS" style="padding:3px 8px;">
                         <i class="fa fa-print"></i>
-                    </a>
+                    </button>
                     <button class="ds-act-btn ds-act-delete del-skbs-btn" data-id="<?= $skbs->id_skbs ?>" style="padding:3px 8px;" title="Hapus SKBS">
                         <i class="fa fa-trash"></i>
                     </button>

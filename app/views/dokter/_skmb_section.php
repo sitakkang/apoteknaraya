@@ -133,9 +133,9 @@ $now_tz = new DateTime('now', new DateTimeZone('Asia/Makassar'));
                 <td><?= htmlspecialchars($skmb->jam) ?: '-' ?></td>
                 <td><?= htmlspecialchars($skmb->docnumb) ?></td>
                 <td class="text-center">
-                    <a href="<?= site_url('dokter/cetak_skmb/' . $skmb->id) ?>" target="_blank" class="ds-act-btn ds-act-print" title="Cetak SKMB" style="display:inline-flex;padding:3px 8px;">
+                    <button type="button" class="ds-act-btn ds-act-print btn-cetak-doc" data-path="cetak_skmb/<?= $skmb->id ?>" title="Cetak SKMB" style="padding:3px 8px;">
                         <i class="fa fa-print"></i>
-                    </a>
+                    </button>
                     <button class="ds-act-btn ds-act-delete del-skmb-btn" data-id="<?= $skmb->id ?>" style="padding:3px 8px;" title="Hapus SKMB">
                         <i class="fa fa-trash"></i>
                     </button>

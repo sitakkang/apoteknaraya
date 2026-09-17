@@ -842,14 +842,16 @@ table.dataTable.DTFC_Cloned tbody tr:last-child td {
     transform: translateY(-50%) rotate(90deg);
 }
 
-/* Body — scroll container untuk form panjang.
-   overflow-y:auto + max-height membuat form bisa discroll tanpa JS.
-   Dropdown Chosen ditangani di global.js dengan position:fixed saat terbuka —
-   TIDAK perlu toggle overflow di sini. */
+/* Body — form panjang discroll di level modal (#MyModal sudah
+   overflow-y: auto dan seukuran viewport).
+   PENTING: jangan pasang overflow (auto/hidden/scroll) di sini, karena
+   scroll container SELALU memotong dropdown Chosen/Select2 yang berada di
+   dalamnya — akibatnya daftar pilihan terlihat tertimpa/terpotong oleh
+   tabel atau footer di bawahnya. */
 .ds-modal .modal-body {
     padding: 22px 24px;
-    max-height: calc(100vh - 130px);
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
 }
 .ds-modal .modal-body::-webkit-scrollbar { width: 4px; height: 4px; }
 .ds-modal .modal-body::-webkit-scrollbar-track { background: transparent; }

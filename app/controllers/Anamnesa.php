@@ -836,6 +836,87 @@ class Anamnesa extends CI_Controller {
         echo json_encode(array('status' => 2, 'notif' => 'Dokter pemeriksa berhasil diubah.'));
     }
 
+    // ---------------- Cetak dokumen (SKS / SKBS / SKMB) ----------------
+    // Sebelumnya tombol cetak di modal memakai dokter/cetak_* sehingga tab
+    // baru di-redirect kembali oleh check_akses() menu dokter.
+
+    public function cetak_sks($id) {
+        $this->load->model('M_sks');
+        $data['row'] = $this->M_sks->get_sks_by_id(intval($id));
+        $data['qrcode'] = $this->generate_qrcode(intval($id));
+        if (!$data['row']) {
+            show_404();
+        }
+        $this->load->view('sks/cetak', $data);
+    }
+
+    public function cetak_skbs($id) {
+        $row = $this->db->get_where('trans_skbs', array('id_skbs' => intval($id)))->row();
+        if (!$row) show_404();
+
+        $doct = $this->db->get_where('conf_users', array('id_user' => intval($row->skbs_doct_id)))->row();
+        $row->nip = $doct ? $doct->nip : '';
+
+        $data['docnumb'] = sprintf('%05d', $row->id_skbs) . '/IMIP-SKBS/' . $this->month_roman(date('n')) . '/' . date('Y');
+        $data['row']     = $row;
+        $data['qrcode']  = $this->generate_qrcode_skbs(intval($id));
+
+        $this->load->view('dokter/_skbs_cetak', $data);
+    }
+
+    public function cetak_skmb($id) {
+        $row = $this->db->get_where('skmb', array('id' => intval($id)))->row();
+        if (!$row) show_404();
+
+        $doct = $this->db->get_where('conf_users', array('id_user' => intval($row->doct_by_id)))->row();
+        $row->nip      = $doct ? $doct->nip : '';
+        $row->fullname = $doct ? $doct->fullname : '';
+
+        $data['docnumb'] = !empty($row->docnumb) ? $row->docnumb : sprintf('%05d', $row->id) . '/SKMB/' . $this->month_roman(date('n')) . '/' . date('Y');
+        $data['row']     = $row;
+        $data['qrcode']  = $this->generate_qrcode_skmb(intval($id));
+
+        $this->load->view('skmb/cetak', $data);
+    }
+
+    private function generate_qrcode($sks_number) {
+        $this->load->helper('string');
+        $this->load->library('ciqrcode');
+        $encript      = str_replace('=', '', base64_encode($sks_number . '|' . date('Ymd') . '|SKS'));
+        $codeContents = base_url('sks_validate/verify/' . $encript);
+        $filename     = "SKS-" . random_string('alnum', 50) . ".png";
+        $tempdir      = "img/temp-qrcode/";
+        if (!file_exists($tempdir)) {
+            mkdir($tempdir);
+        }
+        QRcode::png($codeContents, $tempdir . $filename, QR_ECLEVEL_H, 4, 2);
+        return base_url($tempdir . $filename);
+    }
+
+    private function generate_qrcode_skbs($id) {
+        $this->load->helper('string');
+        $this->load->library('ciqrcode');
+        $encript      = str_replace('=', '', base64_encode($id . '|' . date('Ymd') . '|SKBS'));
+        $codeContents = base_url('sks_validate/verify/' . $encript);
+        $filename     = "SKBS-" . random_string('alnum', 50) . ".png";
+        $tempdir      = "img/temp-qrcode/";
+        if (!file_exists($tempdir)) mkdir($tempdir);
+        QRcode::png($codeContents, $tempdir . $filename, QR_ECLEVEL_H, 4, 2);
+        return base_url($tempdir . $filename);
+    }
+
+    private function generate_qrcode_skmb($id) {
+        $this->load->helper('string');
+        $this->load->library('ciqrcode');
+        $encript      = str_replace('=', '', base64_encode($id . '|' . date('Ymd') . '|SKMB'));
+        $codeContents = base_url('sks_validate/verify/' . $encript);
+        $filename     = "SKMB-" . random_string('alnum', 50) . ".png";
+        $tempdir      = "img/temp-qrcode/";
+        if (!file_exists($tempdir)) mkdir($tempdir);
+        QRcode::png($codeContents, $tempdir . $filename, QR_ECLEVEL_H, 4, 2);
+        return base_url($tempdir . $filename);
+    }
+
     /**
      * Nomor dokumen SKMB (running number per bulan)
      */
