@@ -85,10 +85,6 @@ else                  $greeting = 'Selamat Malam';
       <i class="fa fa-stethoscope"></i>
       <span>Anamnesa</span>
     </a>
-    <a href="<?=site_url('dokter');?>" class="ds-dash-link-card">
-      <i class="fa fa-user-md"></i>
-      <span>Dokter</span>
-    </a>
     
     <a href="<?=site_url('sks');?>" class="ds-dash-link-card">
       <i class="fa fa-file-signature"></i>
