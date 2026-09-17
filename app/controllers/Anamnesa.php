@@ -501,6 +501,51 @@ class Anamnesa extends CI_Controller {
         $this->load->view('dokter/racikan/v_form_edit', array('pulv' => $pulv));
     }
 
+    public function get_racikan_form() {
+        $medical_record_id = intval($this->input->get('mrd_id'));
+        if (!$medical_record_id) {
+            echo 'Data tidak lengkap';
+            return;
+        }
+        $this->load->view('dokter/racikan/v_form_manual', array(
+            'medical_record_id' => $medical_record_id,
+        ));
+    }
+
+    /**
+     * Simpan racikan manual (isi racikan diketik langsung, tanpa memilih obat).
+     */
+    public function act_save_pulv_manual() {
+        $medical_record_id = intval($this->input->post('medical_record_id'));
+        $pulv_name  = strtoupper(trim($this->input->post('pulv_name')));
+        $komposisi  = trim($this->input->post('pulv_notes'));
+        $pulv_dosis = trim($this->input->post('pulv_dosis'));
+        $pulv_qty   = intval($this->input->post('pulv_qty'));
+
+        if (!$medical_record_id) {
+            echo json_encode(array('status' => 1, 'notif' => 'Data pemeriksaan tidak ditemukan!'));
+            return;
+        }
+        if ($komposisi === '') {
+            echo json_encode(array('status' => 1, 'notif' => 'Isi racikan wajib diisi!'));
+            return;
+        }
+        if ($pulv_name === '') $pulv_name = 'RACIKAN';
+        if ($pulv_qty < 1)    $pulv_qty  = 1;
+
+        $this->M_dokter->insert_pulv(array(
+            'medical_record_id' => $medical_record_id,
+            'pulv_name'         => $pulv_name,
+            'pulv_notes'        => $komposisi,
+            'pulv_dosis'        => $pulv_dosis,
+            'pulv_qty'          => $pulv_qty,
+            'pulv_insert_by'    => $this->session->userdata('sess_id'),
+            'pulv_insert_dt'    => date('Y-m-d H:i:s'),
+        ));
+
+        echo json_encode(array('status' => 2, 'notif' => 'Racikan berhasil disimpan!'));
+    }
+
     public function act_save_pulv() {
         $medical_record_id = intval($this->input->post('medical_record_id'));
         $option_pulv = $this->input->post('option_pulv');

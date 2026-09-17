@@ -87,6 +87,8 @@
                         </span>
                     </div>
                     <div style="padding:6px 12px;">
+                        <?php $items = $pulv_items[$p->id_pulv] ?? array(); ?>
+                        <?php if (!empty($items)): ?>
                         <table class="ds-table" style="margin:0;font-size:12px;">
                             <thead>
                                 <tr>
@@ -99,7 +101,6 @@
                             <tbody>
                                 <?php 
                                 $no=1;
-                                $items = $pulv_items[$p->id_pulv] ?? array();
                                 foreach ($items as $o): 
                                 ?>
                                 <tr>
@@ -111,9 +112,11 @@
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                        <?php endif; ?>
                         <?php if (!empty($p->pulv_notes)): ?>
-                        <div style="margin-top:4px;padding:4px 8px;background:#f8f9fa;border-radius:4px;font-size:11px;color:#555;">
-                            <strong>Catatan:</strong> <?= nl2br(htmlspecialchars((string) $p->pulv_notes)) ?>
+                        <div style="<?= empty($items) ? '' : 'margin-top:4px;' ?>padding:4px 8px;background:#f8f9fa;border-radius:4px;font-size:12px;color:#333;">
+                            <strong><?= empty($items) ? 'Isi Racikan' : 'Catatan' ?>:</strong>
+                            <div style="margin-top:2px;"><?= nl2br(htmlspecialchars((string) $p->pulv_notes)) ?></div>
                         </div>
                         <?php endif; ?>
                     </div>

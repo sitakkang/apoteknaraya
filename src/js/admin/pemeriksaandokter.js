@@ -518,6 +518,47 @@ $(document).ready(function () {
     });
 
     // ================================================================
+    // RACIKAN — input manual (tanpa memilih obat dari tabel)
+    // ================================================================
+    $(document).on('click', '#btn-add-racikan', function () {
+        // Hidden input beda per konteks: #mrd_id_obat (modal/section Obat)
+        // atau #mrd_id_diagnosa (halaman pemeriksaan penuh)
+        var mrd_id = $('#mrd_id_obat').val() || $('#mrd_id_diagnosa').val();
+        if (!mrd_id) { notifNo('Data pemeriksaan tidak ditemukan'); return false; }
+
+        $.get(examUrl('get_racikan_form'), { mrd_id: mrd_id }, function (html) {
+            $('#MyModalTitle').html('<i class="fa fa-mortar-pestle"></i> Tambah Racikan');
+            $('#MyModalContent').html(html);
+            $('#MyModalFooter').html(
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>' +
+                '<button type="button" class="ds-btn-action ds-btn-green" id="btn_save_racikan_manual" style="padding:8px 22px">Simpan Racikan</button>'
+            );
+            $('.modal-dialog').addClass('ds-modal').addClass('modal-md');
+            $('#MyModal').modal('show');
+            $('#pulv_komposisi').focus();
+        });
+    });
+
+    $(document).on('click', '#btn_save_racikan_manual', function () {
+        var payload = {
+            medical_record_id: $('#pulv_medical_record_id').val(),
+            pulv_name:  $('#pulv_name').val(),
+            pulv_notes: $('#pulv_komposisi').val(),
+            pulv_dosis: $('#pulv_dosis').val(),
+            pulv_qty:   $('#pulv_qty').val(),
+        };
+        if ($.trim(payload.pulv_notes) === '') {
+            notifNo('Isi racikan wajib diisi');
+            return false;
+        }
+
+        $.post(examUrl('act_save_pulv_manual'), payload, function (res) {
+            if (res.status == 1) notifNo(res.notif);
+            else { $('#MyModal').modal('hide'); notifYesAuto(res.notif); reloadObatTable(); }
+        }, 'json');
+    });
+
+    // ================================================================
     // Cetak dokumen (SKS / SKBS / SKMB)
     // URL mengikuti halaman pemanggil: 'dokter/' atau 'anamnesa/'.
     // ================================================================

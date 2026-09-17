@@ -33,9 +33,14 @@
 
 <hr style="border-color:var(--ds-border);margin:14px 0;">
 
-<h6 style="font-weight:700;margin-bottom:10px;">
-    <i class="fa fa-mortar-pestle"></i> Racikan
-</h6>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+    <h6 style="font-weight:700;margin:0;">
+        <i class="fa fa-mortar-pestle"></i> Racikan
+    </h6>
+    <button class="ds-btn-action ds-btn-green" id="btn-add-racikan" style="padding:6px 14px;font-size:12px;">
+        <i class="fa fa-plus"></i> Tambah Racikan
+    </button>
+</div>
 <div id="pulv-list-wrap">
     <?php $this->load->view('dokter/racikan/v_list', array(
         'pulv_list' => $pulv_list,
