@@ -229,21 +229,14 @@ cat ~/.ssh/apoteknaraya.pub
 # 3) daftarkan ke GitHub: repo → Settings → Deploy keys → Add deploy key
 #    paste kunci di atas, JANGAN centang "Allow write access"
 
-# 4) buat alias SSH supaya git selalu memakai kunci ini
-touch ~/.ssh/config && chmod 600 ~/.ssh/config
-cat >> ~/.ssh/config <<'EOF'
-
-Host github-apoteknaraya
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/apoteknaraya
-    IdentitiesOnly yes
-EOF
-
-# 5) tes (dijawab "yes" saat ditanya fingerprint)
-ssh -T github-apoteknaraya
+# 4) tes kunci langsung ke GitHub (dijawab "yes" saat ditanya fingerprint)
+ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes -T git@github.com
 #    jawaban benar: "Hi sitakkang/apoteknaraya! You've successfully authenticated..."
 ```
+
+> Kalau muncul `Permission denied (publickey)` → public key belum ter-paste di Deploy keys GitHub.
+> Kalau muncul `Could not resolve hostname` → jangan pakai alias (`github-apoteknaraya`);
+> pakai bentuk `git@github.com:...` seperti pada Bagian 6.4.
 
 > Alternatif tanpa deploy key — pakai token pada URL HTTPS:
 > `git clone https://USERNAME_GITHUB:TOKEN@github.com/sitakkang/apoteknaraya.git .`
@@ -256,7 +249,9 @@ Direktori tujuan **harus kosong** supaya bisa clone langsung ke situ.
 ```bash
 cd ~
 mkdir -p ~/backup_public_html_default
-mv ~/public_html/{400.shtml,401.shtml,403.shtml,404.shtml,413.shtml,500.shtml,cp_errordocument.shtml,default.html,default-welcome.html,php.ini} ~/backup_public_html_default/ 2>/dev/null
+mv ~/public_html/* ~/backup_public_html_default/ 2>/dev/null
+mv ~/public_html/.[!.]* ~/backup_public_html_default/ 2>/dev/null   # file tersembunyi (.htaccess, .well-known)
+mv ~/public_html/..?* ~/backup_public_html_default/ 2>/dev/null
 ls -la ~/public_html          # harus kosong (hanya . dan ..)
 ```
 
@@ -268,12 +263,24 @@ ls -la ~/public_html          # harus kosong (hanya . dan ..)
 
 ```bash
 cd ~/public_html
-git clone git@github-apoteknaraya:sitakkang/apoteknaraya.git .
+GIT_SSH_COMMAND="ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes" \
+  git clone git@github.com:sitakkang/apoteknaraya.git .
+
+# simpan perintah ssh ke konfigurasi repo, supaya `git pull` berikutnya jalan tanpa opsi tambahan
+git config core.sshCommand "ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes"
 
 # verifikasi
 ls -la
-git log --oneline -3
+ls -a                 # .git harus ada
 ```
+
+> Kalau repo masih **public**, tidak perlu kunci sama sekali:
+> `git clone https://github.com/sitakkang/apoteknaraya.git .`
+> (isinya sama, cuma riwayat kode bisa dilihat siapa pun — lihat Bagian 1).
+
+> Tidak memakai alias `Host github-apoteknaraya` lagi supaya tidak bergantung pada `~/.ssh/config`;
+> kalau tetap ingin alias, pastikan file itu dibuat di `~` (bukan di dalam `public_html`) dan
+> permissionnya `chmod 600 ~/.ssh/config`.
 
 Struktur hasil clone: `index.php`, `.htaccess`, `app/`, `img/`, `lib/`, `src/`, `sys/`, `.git/`.
 
@@ -454,6 +461,10 @@ Setting khusus server harus lewat file yang tidak ada di repo: `database.php`, `
 |---|---|
 | `Update from Remote` gagal / minta login | Deploy key belum ditambahkan atau token salah/expired. Ulangi Bagian 3. |
 | `git pull` gagal: *Your local changes would be overwritten* | Ada file repo yang diedit di server. Jalankan `git checkout -- <nama file>` (buang edit server) atau pindahkan setting ke `environment.php`/`database.php`. |
+| `fatal: destination path '.' already exists and is not an empty directory` | `public_html` masih berisi file (termasuk file tersembunyi). Kosongkan dulu — Bagian 6.3 — atau clone ke nama folder lain: `git clone <url> apoteknaraya` lalu pindahkan isinya. |
+| `ssh: Could not resolve hostname github-apoteknaraya` | Alias SSH tidak terbaca (file `~/.ssh/config` belum ada/salah lokasi). Pakai URL asli `git@github.com:sitakkang/apoteknaraya.git` + `GIT_SSH_COMMAND`/`core.sshCommand` seperti Bagian 6.4. |
+| `Permission denied (publickey)` | Public key belum ter-paste di GitHub **Deploy keys**, atau kunci salah. Uji: `ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes -T git@github.com`. |
+| `~/.ssh/config` tidak berpengaruh di shell cPanel | Shell cPanel bisa berjalan di jail. Solusi paling pasti: `git config core.sshCommand "ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes"` di dalam repo. |
 | Blank/putih setelah login | Cek `public_html/app/logs/log-*.php`. Sementara ubah `environment.php` jadi `define('APP_ENV','development')` untuk melihat pesan error, lalu balikkan ke `production`. |
 | Semua URL kecuali beranda → 404 | Rewrite tidak jalan: pastikan `.htaccess` ada di `public_html`. Jika hosting mematikan `AllowOverride`, set `$config['index_page'] = 'index.php';` di `app/config/config.php` (URL jadi `index.php/...`). |
 | Login sukses tapi langsung logout / "session error" | Folder `app/sessions` tidak writable, atau `cookie_secure=TRUE` padahal diakses lewat `http://`. Perbaiki permission atau sementara set `cookie_secure` `FALSE`. |
