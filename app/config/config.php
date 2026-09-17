@@ -326,7 +326,11 @@ $config['cache_query_string'] = FALSE;
 | https://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = 'FCD9649AF3D993FE';
+/*
+| Kunci unik milik aplikasi ini — jangan disamakan dengan project asal/clone lainnya.
+| (Dipakai CodeIgniter untuk library Encryption/Encrypt.)
+*/
+$config['encryption_key'] = 'A7F3C1D9E4B8062A5C7D1E9F3B6A8C40';
 
 /*
 |--------------------------------------------------------------------------
@@ -380,9 +384,22 @@ $config['encryption_key'] = 'FCD9649AF3D993FE';
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'imip_core4';
+/*
+| WAJIB UNIK PER APLIKASI.
+| Aplikasi ini adalah clone dari project lain. Kalau nama cookie sesi sama,
+| login di aplikasi satu akan menimpa/menendang sesi aplikasi lainnya
+| (browser mengirim session id yang sama ke kedua aplikasi).
+| Hanya boleh berisi karakter [0-9a-z_-].
+*/
+$config['sess_cookie_name'] = 'narayaapotek_sess';
 $config['sess_expiration'] = 3600;
-$config['sess_save_path'] = sys_get_temp_dir();
+/*
+| Folder sesi khusus aplikasi ini. Jangan memakai sys_get_temp_dir() bila di
+| server ada beberapa aplikasi, supaya file sesi tidak bercampur.
+| Folder ini harus bisa ditulis oleh user PHP (chmod 755/775).
+| Jangan diubah ke path relatif — CodeIgniter hanya menerima path absolut.
+*/
+$config['sess_save_path'] = APPPATH.'sessions';
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
