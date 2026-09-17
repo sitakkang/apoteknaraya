@@ -1,0 +1,12 @@
+2026-09-17 13:33:13: 
+Warning: Use of undefined constant QR_CACHE_DIR - assumed 'QR_CACHE_DIR' (this will throw an Error in a future version of PHP) in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrspec.php on line 561
+
+Warning: Use of undefined constant QR_CACHEABLE - assumed 'QR_CACHEABLE' (this will throw an Error in a future version of PHP) in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrspec.php on line 563
+
+Warning: Use of undefined constant QR_FIND_BEST_MASK - assumed 'QR_FIND_BEST_MASK' (this will throw an Error in a future version of PHP) in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrencode.php on line 215
+
+Warning: Use of undefined constant QR_FIND_FROM_RANDOM - assumed 'QR_FIND_FROM_RANDOM' (this will throw an Error in a future version of PHP) in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrmask.php on line 293
+
+Warning: Use of undefined constant QR_FIND_FROM_RANDOM - assumed 'QR_FIND_FROM_RANDOM' (this will throw an Error in a future version of PHP) in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrmask.php on line 295
+
+Warning: A non-numeric value encountered in C:\xampp\htdocs\apoteknaraya\app\libraries\qrcode\qrmask.php on line 295

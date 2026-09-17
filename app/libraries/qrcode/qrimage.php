@@ -27,7 +27,12 @@
     class QRimage {
 
         //----------------------------------------------------------------------
-        public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$saveandprint=FALSE, $back_color, $fore_color)
+        // Catatan: $back_color & $fore_color WAJIB punya nilai default.
+        // Di PHP 8, parameter opsional yang ditulis sebelum parameter wajib
+        // memunculkan "Deprecated: Optional parameter ... declared before
+        // required parameter ...". Nilai default disamakan dengan
+        // QRcode::png() pada qrencode.php supaya perilaku tetap sama.
+        public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4, $saveandprint = FALSE, $back_color = 0xFFFFFF, $fore_color = 0x000000)
         {
             $image = self::image($frame, $pixelPerPoint, $outerFrame, $back_color, $fore_color);
 
