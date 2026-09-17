@@ -1598,6 +1598,8 @@ table.dataTable.DTFC_Cloned tbody tr:last-child td {
 .ds-icon-blue   { background: #e3f2fd; color: #1565c0; }
 .ds-icon-orange { background: #fff3e0; color: #e65100; }
 .ds-icon-red    { background: #fce4ec; color: #c62828; }
+.ds-icon-teal   { background: #e0f2f1; color: #00695c; }
+.ds-icon-purple { background: #f3e5f5; color: #6a1b9a; }
 
 .ds-dash-card-body {
     min-width: 0;

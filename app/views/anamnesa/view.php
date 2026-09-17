@@ -49,8 +49,14 @@
                             <th width="120">No. Telepon</th>
                             <th width="110" class="text-center">Tgl. Daftar</th>
                             <th width="140" class="text-center">Jam Daftar</th>
-                            <th width="80" class="text-center">Aksi</th>
+                            <th width="110" class="text-center">Aksi</th>
                             <th width="170" class="text-center">Anamnesa</th>
+                            <th width="90" class="text-center">Dokter</th>
+                            <th width="90" class="text-center">Diagnosa</th>
+                            <th width="90" class="text-center">Obat</th>
+                            <th width="80" class="text-center">SKS</th>
+                            <th width="80" class="text-center">SKBS</th>
+                            <th width="80" class="text-center">SKMB</th>
                         </tr>
                     </thead>
                     <tbody></tbody>

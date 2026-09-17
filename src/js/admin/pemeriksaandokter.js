@@ -14,6 +14,11 @@ function reloadDiagnosaTable() {
 function reloadObatTable() {
     var vid = getVisitIdPemeriksaan();
     if (!vid) return;
+    if (!$('#obat-table-wrap').length) {
+        // Section ini sedang tampil di dalam modal (menu Anamnesa) — muat ulang isi modalnya
+        if (typeof examModalRefresh === 'function') examModalRefresh('obat', vid);
+        return;
+    }
     $('#obat-table-wrap').load(site_url + 'dokter/reload_obat?visit_id=' + vid, function () {
         reloadPulvList();
     });
@@ -22,6 +27,10 @@ function reloadObatTable() {
 function reloadPulvList() {
     var vid = getVisitIdPemeriksaan();
     if (!vid) return;
+    if (!$('#pulv-list-wrap').length) {
+        if (typeof examModalRefresh === 'function') examModalRefresh('obat', vid);
+        return;
+    }
     $.get(site_url + 'dokter/reload_pulv?visit_id=' + vid, function (html) {
         $('#pulv-list-wrap').html(html);
     });
@@ -124,15 +133,15 @@ $(document).ready(function () {
 	});
     $(document).on('click', '#btn_add_obat', function () {
         var mrd_id = $('#mrd_id_obat').val();
-        var obat_id = $('#select_obat').val();
+        var obat_name = $.trim($('#obat_name').val());
         var qty = parseInt($('#obat_qty').val()) || 1;
         var dosis = $('#obat_dosis').val();
-        if (!obat_id) { notifNo('Silakan pilih obat'); return false; }
+        if (!obat_name) { notifNo('Silakan ketik nama obat'); return false; }
         if (qty < 1) { notifNo('Qty minimal 1'); return false; }
 
         $.post(site_url + 'dokter/act_add_obat', {
             medical_record_id: mrd_id,
-            obat_id: obat_id,
+            obat_name: obat_name,
             qty: qty,
             dosis: dosis
         }, function (res) {
@@ -140,9 +149,17 @@ $(document).ready(function () {
                 notifNo(res.notif);
             } else {
                 notifYesAuto(res.notif);
+                $('#obat_name').val('').focus();
+                $('#obat_qty').val(1);
+                $('#obat_dosis').val('');
                 reloadObatTable();
             }
         }, 'json');
+    });
+
+    // Tekan Enter di kolom obat = tambah obat (mempercepat input manual)
+    $(document).on('keypress', '#obat_name, #obat_qty, #obat_dosis', function (e) {
+        if (e.which === 13) { e.preventDefault(); $('#btn_add_obat').trigger('click'); }
     });
 
     $(document).on('click', '.del-obat-btn', function () {
@@ -232,10 +249,6 @@ $(document).ready(function () {
             skbs_tb:       $('#skbs_tb').val(),
             skbs_bb:       $('#skbs_bb').val(),
             skbs_bw:       $('#skbs_bw').val(),
-            skbs_r:        $('#skbs_r').val(),
-            skbs_l:        $('#skbs_l').val(),
-            skbs_koreksi_r:$('#skbs_koreksi_r').val(),
-            skbs_koreksi_l:$('#skbs_koreksi_l').val(),
         };
         if (!payload.skbs_result) { notifNo('Silakan pilih hasil'); return false; }
 

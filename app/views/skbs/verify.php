@@ -235,7 +235,7 @@
 
         <!-- Footer -->
         <div class="v-footer">
-            <span>Diterbitkan oleh Apotek Alif Medika</span>
+            <span>Diterbitkan oleh Apotek Naraya</span>
             <span class="v-footer-seal">
                 <span>&#9679;</span>
                 <?= !empty($row->insert_dt) ? date('d-m-Y H:i', strtotime($row->insert_dt)) : '-' ?>

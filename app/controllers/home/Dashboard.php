@@ -96,6 +96,17 @@ class Dashboard extends CI_Controller {
 			"SELECT COUNT(*) AS jml FROM sks WHERE MONTH(insertdt) = MONTH(CURDATE()) AND YEAR(insertdt) = YEAR(CURDATE())"
 		)->row()->jml;
 
+		// SKBS: status 1 = aktif (0 = sudah dihapus, lihat Dokter::act_del_skbs)
+		$data['skbs_bulan_ini'] = $this->db->query(
+			"SELECT COUNT(*) AS jml FROM trans_skbs
+			 WHERE skbs_status = 1
+			   AND MONTH(insert_dt) = MONTH(CURDATE()) AND YEAR(insert_dt) = YEAR(CURDATE())"
+		)->row()->jml;
+
+		$data['skmb_bulan_ini'] = $this->db->query(
+			"SELECT COUNT(*) AS jml FROM skmb WHERE MONTH(insertdt) = MONTH(CURDATE()) AND YEAR(insertdt) = YEAR(CURDATE())"
+		)->row()->jml;
+
 		$data['total_pasien'] = $this->db->query(
 			"SELECT COUNT(*) AS jml FROM ms_patient WHERE patient_status = 1"
 		)->row()->jml;

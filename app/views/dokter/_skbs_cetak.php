@@ -18,6 +18,7 @@
         .kop { text-align: center; }
         .kop-instansi { font-size: 16px; font-weight: 700; letter-spacing: 1.6px; }
         .kop-dokter   { font-size: 13px; font-weight: 600; margin-top: 2px; }
+        .kop-nip      { font-size: 12px; color: #444; margin-top: 1px; letter-spacing: 0.3px; }
         .kop-alamat   { font-size: 12px; color: #555; margin-top: 2px; }
         .kop hr.tebal { border: 0; border-top: 2px solid #1a1a1a; margin: 5px 0 0; }
         .kop hr.tipis { border: 0; border-top: 1px solid #1a1a1a; margin: 2px 0 0; }
@@ -107,9 +108,12 @@
     <!-- ══════════ KOP SURAT ══════════ -->
     <div class="kop">
         <div class="kop-instansi">PRAKTEK DOKTER UMUM</div>
-        <div class="kop-dokter">dr. Steve Kojongian</div>
+        <div class="kop-dokter"><?= htmlspecialchars($row->skbs_doct_name ?: '_________________') ?></div>
+        <?php if (!empty($row->nip)): ?>
+        <div class="kop-nip">NIP. <?= htmlspecialchars($row->nip) ?></div>
+        <?php endif; ?>
         <div class="kop-alamat">
-            Jl. Trans Sulawesi, Ds. Bahodopi, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 081342161194
+            Jl. Poros Transmigrasi, Ds. Keurea, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 082190597990
         </div>
         <hr class="tebal">
         <hr class="tipis">
@@ -162,18 +166,6 @@
                 <td>: <?= htmlspecialchars($row->skbs_bb ?: '-') ?> Kg</td>
                 <td><strong>Buta Warna</strong></td>
                 <td>: <?= htmlspecialchars($row->skbs_bw ?: '-') ?></td>
-            </tr>
-            <tr>
-                <td><strong>Visus R</strong></td>
-                <td>: <?= htmlspecialchars($row->skbs_r ?: '-') ?></td>
-                <td><strong>Visus L</strong></td>
-                <td>: <?= htmlspecialchars($row->skbs_l ?: '-') ?></td>
-            </tr>
-            <tr>
-                <td><strong>Visus Koreksi R</strong></td>
-                <td>: <?= htmlspecialchars($row->skbs_koreksi_r ?: '-') ?></td>
-                <td><strong>Visus Koreksi L</strong></td>
-                <td>: <?= htmlspecialchars($row->skbs_koreksi_l ?: '-') ?></td>
             </tr>
         </table>
         <?php if (!empty($row->skbs_note)): ?>

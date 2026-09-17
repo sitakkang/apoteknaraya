@@ -88,22 +88,6 @@
                         <span class="ds-detail-label">Berat Badan</span>
                         <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_bb) ?: '-' ?> Kg</span>
                     </div>
-                    <div class="ds-detail-field">
-                        <span class="ds-detail-label">Visus R</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_r) ?: '-' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
-                        <span class="ds-detail-label">Visus L</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_l) ?: '-' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
-                        <span class="ds-detail-label">Visus Koreksi R</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_koreksi_r) ?: '-' ?></span>
-                    </div>
-                    <div class="ds-detail-field">
-                        <span class="ds-detail-label">Visus Koreksi L</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->skbs_koreksi_l) ?: '-' ?></span>
-                    </div>
                 </div>
                 <?php if (!empty($row->skbs_note)): ?>
                 <div class="ds-detail-field" style="margin-top: 10px;">

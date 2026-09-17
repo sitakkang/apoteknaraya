@@ -22,7 +22,7 @@ if (!empty($row->patient_bod)) {
             </div>
         </div>
         <div class="ds-page-header-end">
-            <a href="<?= site_url('dokter') ?>" class="ds-btn-header" style="background:#6c757d;color:#fff;">
+            <a href="<?= site_url(isset($back_menu) ? $back_menu : 'dokter') ?>" class="ds-btn-header" style="background:#6c757d;color:#fff;">
                 <i class="fa fa-arrow-left"></i> Kembali
             </a>
         </div>
@@ -169,131 +169,59 @@ if (!empty($row->patient_bod)) {
                         <!-- TAB 1: Diagnosa -->
                         <!-- ============================================ -->
                         <div class="tab-pane fade show active" id="tab-diagnosa" role="tabpanel">
-                            <input type="hidden" id="mrd_id_diagnosa" value="<?= $row->id_medical_record ?>">
-
-                            <div class="row" style="margin: 0 -4px;">
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <select id="select_diagnosa" class="form-control autocomplete" data-placeholder="Cari & pilih diagnosa...">
-                                        <option value=""></option>
-                                        <?php foreach ($diagnosa_list as $d): ?>
-                                            <option value="<?= $d->id_diagnosa ?>" data-cat="<?= htmlspecialchars($d->dgn_cat) ?>">
-                                                <?= htmlspecialchars($d->dgn_cat ? '['.$d->dgn_cat.'] ' : '') . htmlspecialchars($d->dgn_name) ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-4" style="padding: 0 4px;">
-                                    <input type="text" id="dgn_note" class="form-control" placeholder="Catatan dokter..." maxlength="225">
-                                </div>
-                                <div class="col-md-2" style="padding: 0 4px;">
-                                    <button class="ds-btn-action ds-btn-green" id="btn_add_diagnosa" style="padding:7px 14px;width:100%;">
-                                        <i class="fa fa-plus"></i> Tambah
-                                    </button>
-                                </div>
-                            </div>
-
-                            <hr style="border-color:var(--ds-border);margin:14px 0;">
-
-                            <div class="ds-wide-table-wrap" style="margin:0;" id="diagnosa-table-wrap">
-                                <?php $this->load->view('dokter/_diagnosa_table', array('diagnosa_terpilih' => $diagnosa_terpilih)); ?>
-                            </div>
+                            <?php $this->load->view('dokter/_diagnosa_section', array(
+                                'row' => $row,
+                                'diagnosa_list' => $diagnosa_list,
+                                'diagnosa_terpilih' => $diagnosa_terpilih,
+                            )); ?>
                         </div>
 
                         <!-- ============================================ -->
                         <!-- TAB 2: Obat -->
                         <!-- ============================================ -->
                         <div class="tab-pane fade" id="tab-obat" role="tabpanel">
-                            <input type="hidden" id="mrd_id_obat" value="<?= $row->id_medical_record ?>">
-
-                            <div class="row" style="margin: 0 -4px;">
-                                <div class="col-md-6" style="padding: 0 4px;">
-                                    <select id="select_obat" class="form-control autocomplete" data-placeholder="Cari & pilih obat...">
-                                        <option value=""></option>
-                                        <?php foreach ($obat_list as $o): ?>
-                                            <option value="<?= $o->id_obat ?>" data-price="<?= $o->obat_price ?>">
-                                                <?= htmlspecialchars($o->obat_name) ?> — <?= htmlspecialchars($o->obat_satuan) ?> (Rp <?= number_format($o->obat_price, 0, ',', '.') ?>)
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md-2" style="padding: 0 4px;">
-                                    <input type="number" id="obat_qty" class="form-control" value="1" min="1" placeholder="Qty">
-                                </div>
-                                <div class="col-md-2" style="padding: 0 4px;">
-                                    <input type="text" id="obat_dosis" class="form-control" placeholder="Dosis" maxlength="100">
-                                </div>
-                                <div class="col-md-2" style="padding: 0 4px;">
-                                    <button class="ds-btn-action ds-btn-green" id="btn_add_obat" style="padding:7px 14px;width:100%;">
-                                        <i class="fa fa-plus"></i> Tambah
-                                    </button>
-                                </div>
-                            </div>
-
-                            <hr style="border-color:var(--ds-border);margin:14px 0;">
-
-                            <div class="ds-wide-table-wrap" style="margin:0;" id="obat-table-wrap">
-                                <?php $this->load->view('dokter/_obat_table', array('obat_terpilih' => $obat_terpilih)); ?>
-                            </div>
-
-                            <hr style="border-color:var(--ds-border);margin:14px 0;">
-
-                            <h6 style="font-weight:700;margin-bottom:10px;">
-                                <i class="fa fa-mortar-pestle"></i> Racikan
-                            </h6>
-                            <div id="pulv-list-wrap">
-                                <?php $this->load->view('dokter/racikan/v_list', array(
-                                    'pulv_list' => $pulv_list,
-                                    'pulv_items' => $pulv_items,
-                                )); ?>
-                            </div>
+                            <?php $this->load->view('dokter/_obat_section', array(
+                                'row' => $row,
+                                'obat_terpilih' => $obat_terpilih,
+                                'pulv_list' => $pulv_list,
+                                'pulv_items' => $pulv_items,
+                            )); ?>
                         </div>
 
                         <!-- ============================================ -->
                         <!-- TAB 3: SKS -->
                         <!-- ============================================ -->
                         <div class="tab-pane fade" id="tab-sks" role="tabpanel">
-                            <input type="hidden" id="visit_id_sks" value="<?= $row->id_visit ?>">
-                            <input type="hidden" id="sks_patient_name" value="<?= htmlspecialchars($row->patient_name) ?>">
-                            <input type="hidden" id="sks_company_name" value="<?= htmlspecialchars($row->trans_patient_company) ?>">
-
-                            <div id="sks-section-wrap" data-visit-id="<?= $row->id_visit ?>">
-                                <?php $this->load->view('dokter/_sks_section', array(
-                                    'row' => $row,
-                                    'sks' => $sks,
-                                    'sks_list' => $sks ? array($sks) : array(),
-                                    'dokter_list' => $dokter_list,
-                                    'sks_diagnosa_default' => $sks_diagnosa_default,
-                                    'sks_terapi_default' => $sks_terapi_default,
-                                )); ?>
-                            </div>
+                            <?php $this->load->view('dokter/_sks_wrap', array(
+                                'row' => $row,
+                                'sks' => $sks,
+                                'sks_list' => $sks ? array($sks) : array(),
+                                'dokter_list' => $dokter_list,
+                                'sks_diagnosa_default' => $sks_diagnosa_default,
+                                'sks_terapi_default' => $sks_terapi_default,
+                            )); ?>
                         </div>
 
                         <!-- ============================================ -->
                         <!-- TAB 4: SKBS -->
                         <!-- ============================================ -->
                         <div class="tab-pane fade" id="tab-skbs" role="tabpanel">
-                            <input type="hidden" id="visit_id_skbs" value="<?= $row->id_visit ?>">
-                            <div id="skbs-section-wrap" data-visit-id="<?= $row->id_visit ?>">
-                                <?php $this->load->view('dokter/_skbs_section', array(
-                                    'row' => $row,
-                                    'skbs' => $skbs,
-                                    'dokter_list' => $dokter_list,
-                                )); ?>
-                            </div>
+                            <?php $this->load->view('dokter/_skbs_wrap', array(
+                                'row' => $row,
+                                'skbs' => $skbs,
+                                'dokter_list' => $dokter_list,
+                            )); ?>
                         </div>
 
                         <!-- ============================================ -->
                         <!-- TAB 5: SKMB -->
                         <!-- ============================================ -->
                         <div class="tab-pane fade" id="tab-skmb" role="tabpanel">
-                            <input type="hidden" id="visit_id_skmb" value="<?= $row->id_visit ?>">
-                            <div id="skmb-section-wrap" data-visit-id="<?= $row->id_visit ?>">
-                                <?php $this->load->view('dokter/_skmb_section', array(
-                                    'row' => $row,
-                                    'skmb' => $skmb,
-                                    'dokter_list' => $dokter_list,
-                                )); ?>
-                            </div>
+                            <?php $this->load->view('dokter/_skmb_wrap', array(
+                                'row' => $row,
+                                'skmb' => $skmb,
+                                'dokter_list' => $dokter_list,
+                            )); ?>
                         </div>
 
                     </div><!-- /tab-content -->

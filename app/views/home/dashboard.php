@@ -37,6 +37,22 @@ else                  $greeting = 'Selamat Malam';
       </div>
     </div>
     <div class="ds-dash-card">
+      <div class="ds-dash-card-icon ds-icon-teal"><i class="fa fa-heartbeat"></i></div>
+      <div class="ds-dash-card-body">
+        <div class="ds-dash-card-value"><?=isset($skbs_bulan_ini) ? $skbs_bulan_ini : '&mdash;';?></div>
+        <div class="ds-dash-card-label">SKBS Bulan Ini</div>
+        <div class="ds-dash-card-desc">Surat keterangan berbadan sehat</div>
+      </div>
+    </div>
+    <div class="ds-dash-card">
+      <div class="ds-dash-card-icon ds-icon-purple"><i class="fa fa-ambulance"></i></div>
+      <div class="ds-dash-card-body">
+        <div class="ds-dash-card-value"><?=isset($skmb_bulan_ini) ? $skmb_bulan_ini : '&mdash;';?></div>
+        <div class="ds-dash-card-label">SKMB Bulan Ini</div>
+        <div class="ds-dash-card-desc">Surat keterangan mengantar berobat</div>
+      </div>
+    </div>
+    <div class="ds-dash-card">
       <div class="ds-dash-card-icon ds-icon-orange"><i class="fa fa-users"></i></div>
       <div class="ds-dash-card-body">
         <div class="ds-dash-card-value"><?=isset($total_pasien) ? $total_pasien : '&mdash;';?></div>

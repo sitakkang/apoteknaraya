@@ -12,6 +12,15 @@ $(document).ready(function () {
         scrollInput: false,
     });
 
+    // Tombol kolom pemeriksaan (Dokter/Diagnosa/Obat/SKS/SKBS/SKMB) → membuka modal
+    function anmSectionBtn(section, row, icon, label, jml) {
+        jml = parseInt(jml) || 0;
+        return '<button class="ds-act-btn ds-act-view btn-anm-section" data-section="' + section + '" data-visit-id="' + row.DT_RowId + '" title="' + label + ' (' + jml + ')">' +
+                   '<i class="fa ' + icon + '"></i>' +
+                   (jml > 0 ? '<span style="font-size:10px;font-weight:700;margin-left:2px;">' + jml + '</span>' : '') +
+               '</button>';
+    }
+
     // --- DataTable (mulai kosong) ---
     tabel_anamnesa = $('#tabel_anamnesa').DataTable({
         processing: true,
@@ -35,7 +44,7 @@ $(document).ready(function () {
             { data: '6', className: 'text-center' },
             {
                 data: null,
-                width: '80px',
+                width: '110px',
                 orderable: false,
                 className: 'text-center',
                 render: function (data, type, row) {
@@ -43,6 +52,9 @@ $(document).ready(function () {
                                '<button class="ds-act-btn ds-act-view view-row-btn" data-id="' + row.DT_RowId + '" title="Lihat Detail">' +
                                    '<i class="fa fa-eye"></i>' +
                                '</button>' +
+                               '<a href="' + site_url + 'anamnesa/periksa/' + row.DT_RowId + '" class="ds-act-btn ds-act-print" title="Pemeriksaan: Dokter, Diagnosa, Obat, SKS, SKBS, SKMB">' +
+                                   '<i class="fa fa-stethoscope"></i>' +
+                               '</a>' +
                            '</div>';
                 }
             },
@@ -69,6 +81,40 @@ $(document).ready(function () {
                                '</button>' +
                            '</div>';
                 }
+            },
+            // ---- Kolom aksi pemeriksaan — semua aksinya lewat modal ----
+            {
+                data: null,
+                width: '90px',
+                orderable: false,
+                className: 'text-center',
+                render: function (data, type, row) {
+                    var nama = row.mrd_doct_name || '';
+                    return '<button class="ds-act-btn ds-act-edit btn-anm-dokter" data-visit-id="' + row.DT_RowId + '" title="Dokter Pemeriksa: ' + (nama || 'belum ditentukan') + '">' +
+                               '<i class="fa fa-user-md"></i>' +
+                           '</button>' +
+                           (nama ? '' : ' <i class="fa fa-exclamation-circle" style="color:#e67e22;font-size:11px;" title="Dokter belum dipilih"></i>');
+                }
+            },
+            {
+                data: null, width: '90px', orderable: false, className: 'text-center',
+                render: function (data, type, row) { return anmSectionBtn('diagnosa', row, 'fa-stethoscope', 'Diagnosa', row.jml_diagnosa); }
+            },
+            {
+                data: null, width: '90px', orderable: false, className: 'text-center',
+                render: function (data, type, row) { return anmSectionBtn('obat', row, 'fa-pills', 'Obat & Racikan', row.jml_obat); }
+            },
+            {
+                data: null, width: '80px', orderable: false, className: 'text-center',
+                render: function (data, type, row) { return anmSectionBtn('sks', row, 'fa-file-signature', 'SKS', row.jml_sks); }
+            },
+            {
+                data: null, width: '80px', orderable: false, className: 'text-center',
+                render: function (data, type, row) { return anmSectionBtn('skbs', row, 'fa-heartbeat', 'SKBS', row.jml_skbs); }
+            },
+            {
+                data: null, width: '80px', orderable: false, className: 'text-center',
+                render: function (data, type, row) { return anmSectionBtn('skmb', row, 'fa-ambulance', 'SKMB', row.jml_skmb); }
             },
         ],
         language: {
@@ -195,6 +241,80 @@ $(document).ready(function () {
                 else { notifYesAuto(res.notif); loadData(); }
             }, 'json');
         });
+    });
+
+    // ================================================================
+    // KOLOM PEMERIKSAAN — Dokter / Diagnosa / Obat / SKS / SKBS / SKMB
+    // Semua aksi (CRUD) dibuka lewat modal, isinya sama seperti menu Dokter
+    // ================================================================
+    var sectionMeta = {
+        dokter:   { title: '<i class="fa fa-user-md"></i> Pilih Dokter Pemeriksa', size: 'modal-sm' },
+        diagnosa: { title: '<i class="fa fa-stethoscope"></i> Diagnosa Pasien', size: 'modal-lg' },
+        obat:     { title: '<i class="fa fa-pills"></i> Obat & Racikan', size: 'modal-lg' },
+        sks:      { title: '<i class="fa fa-file-signature"></i> Surat Keterangan Sakit', size: 'modal-lg' },
+        skbs:     { title: '<i class="fa fa-heartbeat"></i> SKBS', size: 'modal-lg' },
+        skmb:     { title: '<i class="fa fa-ambulance"></i> SKMB', size: 'modal-lg' }
+    };
+
+    // Plugin yang perlu di-init ulang setiap isi modal dimuat
+    function initAnmModalPlugins() {
+        $('#MyModalContent .autocomplete').chosen({ width: '100%' });
+        $('#MyModalContent .datepicker').datetimepicker({
+            datepicker: true, timepicker: false, format: 'd/m/Y',
+            closeOnDateSelect: true, scrollMonth: false, scrollInput: false,
+        });
+        if ($.fn.clockpicker) {
+            $('#MyModalContent .clockpicker').clockpicker({
+                autoclose: true, donetext: 'OK', placement: 'bottom', align: 'left',
+            });
+        }
+    }
+
+    function openAnmModal(section, visitId) {
+        var meta = sectionMeta[section];
+        if (!meta) return;
+        window.examModalOpen = { section: section, vid: visitId };   // dipakai pemeriksaandokter.js
+        $.get(site_url + 'anamnesa/modal/' + section + '/' + visitId, function (html) {
+            showDsModal(meta.title, html,
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>',
+                meta.size);
+            $('.modal-dialog').removeClass('modal-sm modal-md modal-lg').addClass(meta.size);
+            initAnmModalPlugins();
+        });
+    }
+
+    $('#tabel_anamnesa tbody').on('click', '.btn-anm-section, .btn-anm-dokter', function () {
+        openAnmModal($(this).data('section') || 'dokter', $(this).data('visit-id'));
+    });
+
+    // Dipakai pemeriksaandokter.js saat section yang tampil di modal perlu dimuat ulang
+    // (mis. setelah simpan/ubah/hapus racikan yang popup-nya memakai modal yang sama)
+    window.examModalRefresh = function (section, vid) {
+        if (!window.examModalOpen) return;
+        var meta = sectionMeta[section] || {};
+        $.get(site_url + 'anamnesa/modal/' + section + '/' + vid, function (html) {
+            $('#MyModalTitle').html(meta.title || '');
+            $('#MyModalContent').html(html);
+            $('#MyModalFooter').html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>');
+            initAnmModalPlugins();
+            $('#MyModal').modal('show');
+        });
+    };
+
+    // Pilih dokter pemeriksa dari modal kolom Dokter
+    $(document).on('click', '.pilih-dokter-modal', function () {
+        var doctorId = $(this).data('id');
+        var visitId  = $('#MyModalContent').find('#visit_id_sks').val();
+        if (!doctorId || !visitId) return;
+        $.post(site_url + 'dokter/act_update_doctor', { visit_id: visitId, doctor_id: doctorId }, function (res) {
+            if (res.status == 1) {
+                notifNo(res.notif);
+            } else {
+                $('#MyModal').modal('hide');
+                notifYesAuto(res.notif);
+                loadData();   // perbarui kolom Dokter pada tabel
+            }
+        }, 'json');
     });
 
     // --- Auto load data saat pertama kali (dengan default date hari ini) ---

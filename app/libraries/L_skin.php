@@ -12,17 +12,17 @@ class L_skin {
 	function apps_config($key)
     {
 		$data = array(
-			'title' 		=> 'Alif Medika',
+			'title' 		=> 'Apotek Naraya',
 			'logo' 			=> 'img/apotek-sidebar-logo.jpeg',
 			'login' 		=> 'img/dashboard.jpeg',
 			'favicon' 		=> 'img/apotek_logo_text.png',
 			'noimage' 		=> 'img/noimage.png',
 			'loading' 		=> 'img/loading.gif',
 			'email' 		=> 'info@imip.co.id',
-			'footer' 		=> 'Apotek Alif Medika',
-			'meta_desc' 	=> 'Aplikasi Apotek Alif Medika',
+			'footer' 		=> 'Apotek Naraya',
+			'meta_desc' 	=> 'Aplikasi Apotek Naraya',
 			'meta_key' 		=> 'PT Indonesia Morowali Industrial Park',
-			'head_title' 	=> 'Apotek Alif Medika',
+			'head_title' 	=> 'Apotek Naraya',
 			'head_subtitle' => 'A Human Resources Information System (HRIS) is a software or online solution that is used for data entry, data tracking and the data information requirements of an organizations human resources (HR) management, payroll and bookkeeping operations'
 		);
     	return $data[$key];
@@ -135,6 +135,8 @@ class L_skin {
 
         if($data_main_menu OR $data_sub_menu){
 	        foreach ($data_main_menu as $key => $val) {
+	        	// Menu yang ditutup (status != 1) tidak ditampilkan di sidebar
+	        	if(!isset($data_main_menu[$key]['status']) OR $data_main_menu[$key]['status'] != 1) continue;
 	        	if($data_main_menu[$key]['sub'] == 2){
 	        		echo '<li><a href="javascript:;" data-sidenav-dropdown-toggle><span class="sidenav-link-icon"><i class="fa '.$data_main_menu[$key]['icon'].'"></i></span><span class="sidenav-link-title">'.$data_main_menu[$key]['name'].'</span><span class="sidenav-dropdown-icon show" data-sidenav-dropdown-icon><i class="fa fa-angle-down"></i></span><span class="sidenav-dropdown-icon" data-sidenav-dropdown-icon><i class="fa fa-angle-up"></i></span></a>'."\n";
 	        		echo '<ul class="sidenav-dropdown" data-sidenav-dropdown>';

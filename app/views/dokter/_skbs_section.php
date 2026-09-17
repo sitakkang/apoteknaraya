@@ -79,34 +79,7 @@ function toggleSkbsDesc(el) {
             <input type="text" id="skbs_bw" class="form-control" placeholder="cth: Normal / Parsial" value="<?= $skbs ? htmlspecialchars($skbs->skbs_bw) : '' ?>">
         </div>
     </div>
-    <div class="col-md-4" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Visus Kanan (R)</label>
-            <input type="text" id="skbs_r" class="form-control" placeholder="cth: 6/6" value="<?= $skbs ? htmlspecialchars($skbs->skbs_r) : '' ?>">
-        </div>
-    </div>
-    <div class="col-md-4" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Visus Kiri (L)</label>
-            <input type="text" id="skbs_l" class="form-control" placeholder="cth: 6/6" value="<?= $skbs ? htmlspecialchars($skbs->skbs_l) : '' ?>">
-        </div>
-    </div>
-</div>
-
-<div class="row" style="margin: 0 -6px;">
-    <div class="col-md-4" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Visus Koreksi (R)</label>
-            <input type="text" id="skbs_koreksi_r" class="form-control" placeholder="cth: 6/6" value="<?= $skbs ? htmlspecialchars($skbs->skbs_koreksi_r) : '' ?>">
-        </div>
-    </div>
-    <div class="col-md-4" style="padding: 0 6px;">
-        <div class="ds-form-group">
-            <label>Visus Koreksi (L)</label>
-            <input type="text" id="skbs_koreksi_l" class="form-control" placeholder="cth: 6/6" value="<?= $skbs ? htmlspecialchars($skbs->skbs_koreksi_l) : '' ?>">
-        </div>
-    </div>
-    <div class="col-md-4" style="padding: 0 6px;<?= $skbs && $skbs->skbs_result_name == 'FIT DENGAN CATATAN' ? '' : 'display:none;' ?>" id="skbs_note_wrap">
+    <div class="col-md-8" style="padding: 0 6px;<?= $skbs && $skbs->skbs_result_name == 'FIT DENGAN CATATAN' ? '' : 'display:none;' ?>" id="skbs_note_wrap">
         <div class="ds-form-group">
             <label>Catatan</label>
             <input type="text" id="skbs_note" class="form-control" placeholder="Catatan" value="<?= $skbs ? htmlspecialchars($skbs->skbs_note) : '' ?>">
@@ -136,10 +109,6 @@ function toggleSkbsDesc(el) {
                 <th>TB</th>
                 <th>BB</th>
                 <th>BW</th>
-                <th>Visus R</th>
-                <th>Visus L</th>
-                <th>Koreksi R</th>
-                <th>Koreksi L</th>
                 <th width="80" class="text-center">Aksi</th>
             </tr>
         </thead>
@@ -150,10 +119,6 @@ function toggleSkbsDesc(el) {
                 <td><?= htmlspecialchars($skbs->skbs_tb) ?: '-' ?> cm</td>
                 <td><?= htmlspecialchars($skbs->skbs_bb) ?: '-' ?> kg</td>
                 <td><?= htmlspecialchars($skbs->skbs_bw) ?: '-' ?></td>
-                <td><?= htmlspecialchars($skbs->skbs_r) ?: '-' ?></td>
-                <td><?= htmlspecialchars($skbs->skbs_l) ?: '-' ?></td>
-                <td><?= htmlspecialchars($skbs->skbs_koreksi_r) ?: '-' ?></td>
-                <td><?= htmlspecialchars($skbs->skbs_koreksi_l) ?: '-' ?></td>
                 <td class="text-center">
                     <a href="<?= site_url('dokter/cetak_skbs/' . $skbs->id_skbs) ?>" target="_blank" class="ds-act-btn ds-act-print" title="Cetak SKBS" style="display:inline-flex;padding:3px 8px;">
                         <i class="fa fa-print"></i>

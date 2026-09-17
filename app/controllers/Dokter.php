@@ -95,7 +95,6 @@ class Dokter extends CI_Controller {
         $mrd_id = $data['row']->id_medical_record;
 
         $data['diagnosa_list']  = $this->M_dokter->get_all_diagnosa();
-        $data['obat_list']      = $this->M_dokter->get_all_obat();
         $data['dokter_list']    = $this->M_dokter->get_all_doctor();
         $data['diagnosa_terpilih'] = $this->M_dokter->get_diagnosa_by_medical_record($mrd_id);
         $data['obat_terpilih']  = $this->M_dokter->get_obat_by_medical_record($mrd_id);
@@ -138,6 +137,7 @@ class Dokter extends CI_Controller {
             'lib/datatables/fixedColumns.bootstrap.min.css',
             'lib/datepicker/datepicker.min.css',
             'lib/select/component-chosen.min.css',
+            'lib/clockpicker/clockpicker.min.css',
         );
         $data['js'] = array(
             'lib/bootstrap/js/bootstrap.min.js',
@@ -147,6 +147,7 @@ class Dokter extends CI_Controller {
             'lib/select/chosen.jquery.min.js',
             'lib/mask/jquery.mask.min.js',
             'lib/sweetalert/sweetalert2.all.min.js',
+            'lib/clockpicker/clockpicker.min.js',
             'src/js/admin/dokter.js',
             'src/js/admin/pemeriksaandokter.js',
         );
@@ -223,16 +224,10 @@ class Dokter extends CI_Controller {
      */
     public function act_add_obat() {
         $medical_record_id = intval($this->input->post('medical_record_id'));
-        $obat_id = intval($this->input->post('obat_id'));
+        $obat_name = trim($this->input->post('obat_name'));
 
-        if (!$medical_record_id || !$obat_id) {
-            echo json_encode(array('status' => 1, 'notif' => 'Data tidak lengkap!'));
-            return;
-        }
-
-        $obat = $this->db->get_where('ms_obat', array('id_obat' => $obat_id))->row();
-        if (!$obat) {
-            echo json_encode(array('status' => 1, 'notif' => 'Obat tidak ditemukan!'));
+        if (!$medical_record_id || $obat_name === '') {
+            echo json_encode(array('status' => 1, 'notif' => 'Nama obat wajib diisi!'));
             return;
         }
 
@@ -241,15 +236,12 @@ class Dokter extends CI_Controller {
 
         $dosis = trim($this->input->post('dosis'));
 
+        // Obat diinput manual (tanpa master ms_obat): cukup simpan teksnya di trans_obat_name
         $data = array(
             'medical_record_id'    => $medical_record_id,
-            'obat_id'              => $obat_id,
-            'trans_obat_name'      => $obat->obat_name,
-            'trans_obat_satuan'    => $obat->obat_satuan,
-            'trans_obat_price'     => $obat->obat_price,
+            'trans_obat_name'      => $obat_name,
             'trans_obat_qty'       => $qty,
             'trans_obat_dosis'     => $dosis,
-            'trans_obat_total_price' => $qty * $obat->obat_price,
             'trans_obat_status'    => 1,
             'trans_obat_insert_dt' => date('Y-m-d H:i:s'),
             'trans_obat_insert_by' => $this->session->userdata('sess_id'),
@@ -650,10 +642,6 @@ class Dokter extends CI_Controller {
             'skbs_bw'              => trim($this->input->post('skbs_bw')),
             'skbs_tb'              => trim($this->input->post('skbs_tb')),
             'skbs_bb'              => trim($this->input->post('skbs_bb')),
-            'skbs_r'               => trim($this->input->post('skbs_r')),
-            'skbs_l'               => trim($this->input->post('skbs_l')),
-            'skbs_koreksi_r'       => trim($this->input->post('skbs_koreksi_r')),
-            'skbs_koreksi_l'       => trim($this->input->post('skbs_koreksi_l')),
             'skbs_doc_date'        => date('Y-m-d'),
             'skbs_doct_id'         => $insert_by,
             'skbs_doct_name'       => $doct_by,

@@ -18,6 +18,7 @@
         .kop { text-align: center; }
         .kop-instansi { font-size: 16px; font-weight: 700; letter-spacing: 1.6px; }
         .kop-dokter   { font-size: 13px; font-weight: 600; margin-top: 2px; }
+        .kop-nip      { font-size: 12px; color: #444; margin-top: 1px; letter-spacing: 0.3px; }
         .kop-alamat   { font-size: 12px; color: #555; margin-top: 2px; }
         .kop hr.tebal { border: 0; border-top: 2px solid #1a1a1a; margin: 5px 0 0; }
         .kop hr.tipis { border: 0; border-top: 1px solid #1a1a1a; margin: 2px 0 0; }
@@ -95,11 +96,21 @@
     <button class="btn-print no-print" onclick="window.close()" style="background: #666; margin-left: 6px;">Tutup</button>
 
     <!-- ══════════ KOP SURAT ══════════ -->
+    <?php
+    // Nama & NIP dokter diambil dari conf_users lewat sks.doctby
+    // (lihat M_sks::get_sks_by_id → join sks.doctby = conf_users.id_user)
+    // Kalau join gagal, jangan tampilkan id mentah (doctby berisi id_user)
+    $doct_kop = !empty($row->fullname) ? $row->fullname
+              : (!empty($row->doctby) && !ctype_digit((string) $row->doctby) ? $row->doctby : '');
+    ?>
     <div class="kop">
         <div class="kop-instansi">PRAKTEK DOKTER UMUM</div>
-        <div class="kop-dokter">dr. Steve Kojongian</div>
+        <div class="kop-dokter"><?= htmlspecialchars($doct_kop ?: '_________________') ?></div>
+        <?php if (!empty($row->nip)): ?>
+        <div class="kop-nip">NIP. <?= htmlspecialchars($row->nip) ?></div>
+        <?php endif; ?>
         <div class="kop-alamat">
-            Jl. Trans Sulawesi, Ds. Bahodopi, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 081342161194
+            Jl. Poros Transmigrasi, Ds. Keurea, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 082190597990
         </div>
         <hr class="tebal">
         <hr class="tipis">

@@ -33,11 +33,19 @@ class M_anamnesa extends CI_Model {
                     D.anm_height,
                     D.anm_note,
                     D.anm_stomatch_wide,
-                    D.anm_status AS anm_status
+                    D.anm_status AS anm_status,
+                    E.fullname AS mrd_doct_name,
+                    (SELECT COUNT(*) FROM trans_diagnosa   X1 WHERE X1.medical_record_id = B.id_medical_record AND X1.trans_dgn_status = 1) AS jml_diagnosa,
+                    (SELECT COUNT(*) FROM trans_obat       X2 WHERE X2.medical_record_id = B.id_medical_record AND X2.trans_obat_status = 1) AS jml_obat,
+                    (SELECT COUNT(*) FROM trans_obat_racikan X3 WHERE X3.medical_record_id = B.id_medical_record) AS jml_pulv,
+                    (SELECT COUNT(*) FROM sks              X4 WHERE X4.visit_id = A.id_visit) AS jml_sks,
+                    (SELECT COUNT(*) FROM trans_skbs       X5 WHERE X5.visit_id = A.id_visit AND X5.skbs_status = 1) AS jml_skbs,
+                    (SELECT COUNT(*) FROM skmb             X6 WHERE X6.visit_id = A.id_visit) AS jml_skmb
                 FROM trans_visit A
                 LEFT JOIN trans_medical_record B ON A.id_visit = B.visit_id
                 LEFT JOIN ms_patient C ON A.patient_id = C.id_patient
                 LEFT JOIN trans_anamnesa D ON B.id_medical_record = D.medical_record_id AND D.anm_status = 1
+                LEFT JOIN conf_users E ON B.mrd_doct_by = E.id_user
                 WHERE A.trans_doc = ?
                   AND A.trans_status = 1
                   AND B.mrd_status = 1
