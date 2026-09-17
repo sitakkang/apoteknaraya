@@ -17,6 +17,38 @@ class M_auth extends CI_Model {
 		return $data[$id];
 	}
 
+    /**
+     * Level user AKTIF diambil langsung dari tabel conf_users.
+     * Sengaja tidak memakai session (sess_level) supaya perubahan level di
+     * database langsung berlaku walau session masih lama.
+     *
+     * @param  int|null $id_user default: session id_user (sess_id)
+     * @return int 0 bila user tidak ditemukan
+     */
+    function level_user($id_user = NULL)
+    {
+        if ($id_user === NULL) {
+            $id_user = $this->session->userdata('sess_id');
+        }
+
+        $row = $this->db->select('level')
+                        ->get_where('conf_users', array('id_user' => intval($id_user)))
+                        ->row();
+
+        return $row ? intval($row->level) : 0;
+    }
+
+    /**
+     * Apakah level user aktif termasuk daftar level yang diizinkan?
+     *
+     * Contoh: $this->m_auth->level_in(array(1, 2, 3));
+     */
+    function level_in($levels = array(1, 2, 3), $id_user = NULL)
+    {
+        $levels = array_map('intval', (array) $levels);
+        return in_array($this->level_user($id_user), $levels, TRUE);
+    }
+
     function avatar()
     {
         if(empty($this->session->userdata('sess_avatar'))){

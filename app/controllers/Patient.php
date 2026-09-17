@@ -30,6 +30,12 @@ class Patient extends CI_Controller {
             'src/js/admin/patient.js',
         );
         $data['panel'] = '<i class="fa fa-user-injured"></i> &nbsp;<b>Manajemen Pendaftaran</b>';
+
+        // Tombol "Tambah SKS" hanya untuk user level 1,2,3.
+        // Level dibaca dari conf_users berdasarkan sess_id (lihat M_auth::level_in),
+        // bukan dari session, supaya perubahan level langsung berlaku.
+        $data['can_add_sks'] = $this->m_auth->level_in(array(1, 2, 3));
+
         $this->l_skin->main($this->dir_v.'view', $data);
     }
 

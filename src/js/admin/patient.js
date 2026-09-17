@@ -15,6 +15,10 @@ $(document).ready(function () {
 
     $(".autocomplete").chosen(); 
 
+    // Tombol "Tambah SKS" hanya untuk level 1,2,3.
+    // Flag dikirim controller Patient dari conf_users (M_auth::level_in).
+    var canAddSks = $('#tabel_patient').data('can-add-sks') == 1;
+
     // --- DataTable (tanpa ajax — mulai kosong) ---
     tabel_patient = $('#tabel_patient').DataTable({
         processing: true,
@@ -59,29 +63,27 @@ $(document).ready(function () {
                            '</div>';
                 }
             },
-            {
-                data: null,
-                width: '130px',
-                orderable: false,
-                className: 'text-center',
-                render: function (data, type, row) {
-                    return '<button class="ds-btn-daftar sks-row-btn" data-id="' + row.DT_RowId + '" title="Tambah SKS">' +
-                               '<i class="fa fa-file-text"></i> Tambah SKS' +
-                           '</button>';
-                }
-            },
-            {
-                data: null,
-                width: '80px',
-                orderable: false,
-                className: 'text-center',
-                render: function (data, type, row) {
-                    return '<button class="ds-btn-daftar daftar-row-btn" data-id="' + row.DT_RowId + '" title="Daftarkan Pasien">' +
-                               '<i class="fa fa-clipboard-list"></i> Daftar' +
-                           '</button>';
-                }
-            },
-        ],
+        ].concat(canAddSks ? [{
+            data: null,
+            width: '130px',
+            orderable: false,
+            className: 'text-center',
+            render: function (data, type, row) {
+                return '<button class="ds-btn-daftar sks-row-btn" data-id="' + row.DT_RowId + '" title="Tambah SKS">' +
+                           '<i class="fa fa-file-text"></i> Tambah SKS' +
+                       '</button>';
+            }
+        }] : []).concat([{
+            data: null,
+            width: '80px',
+            orderable: false,
+            className: 'text-center',
+            render: function (data, type, row) {
+                return '<button class="ds-btn-daftar daftar-row-btn" data-id="' + row.DT_RowId + '" title="Daftarkan Pasien">' +
+                           '<i class="fa fa-clipboard-list"></i> Daftar' +
+                       '</button>';
+            }
+        }]),
         language: {
             processing: 'Memuat data...',
             search: 'Cari:',

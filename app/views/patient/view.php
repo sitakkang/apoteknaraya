@@ -55,7 +55,8 @@
     <div class="ds-card">
         <div class="ds-card-bd" style="padding: 18px 20px;">
             <div class="ds-wide-table-wrap" style="margin: 0;">
-                <table id="tabel_patient" class="ds-table" style="margin-top: 0;">
+                <table id="tabel_patient" class="ds-table" style="margin-top: 0;"
+                       data-can-add-sks="<?= !empty($can_add_sks) ? '1' : '0' ?>">
                     <thead>
                         <tr>
                             <th width="40" class="text-center">No</th>
@@ -68,7 +69,9 @@
                             <th width="100" class="text-center">No. Telepon</th>
                             <th width="80" class="text-center">Status</th>
                             <th width="120" class="text-center">Aksi</th>
+                            <?php if (!empty($can_add_sks)): ?>
                             <th width="130" class="text-center">Tambah SKS</th>
+                            <?php endif; ?>
                             <th width="80" class="text-center">Daftar</th>
                         </tr>
                     </thead>

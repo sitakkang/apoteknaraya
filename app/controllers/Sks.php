@@ -109,6 +109,12 @@ class Sks extends CI_Controller {
      * Dipanggil dari modul Patient (tombol "Tambah SKS")
      */
     public function add_from_patient($id) {
+        // Tombol "Tambah SKS" hanya untuk user level 1,2,3
+        // (level dibaca dari conf_users memakai session id_user)
+        if (!$this->m_auth->level_in(array(1, 2, 3))) {
+            show_error('Anda tidak memiliki hak akses untuk menambah SKS.', 403);
+        }
+
         $patient = $this->db->get_where('ms_patient', array('id_patient' => intval($id)))->row();
         if (!$patient) {
             show_404();
@@ -151,7 +157,13 @@ class Sks extends CI_Controller {
      * Proses simpan SKS baru
      */
     public function act_add() {
-        
+
+        // Hanya level 1,2,3 yang boleh membuat SKS
+        if (!$this->m_auth->level_in(array(1, 2, 3))) {
+            echo json_encode(array('status' => 1, 'notif' => 'Anda tidak memiliki hak untuk menambah SKS!'));
+            return;
+        }
+
         if (empty(trim($this->input->post('alamat')))) {
             echo json_encode(array('status' => 1, 'notif' => 'Alamat pasien wajib diisi!'));
             return;
