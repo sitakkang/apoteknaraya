@@ -257,7 +257,29 @@ ls -la ~/public_html          # harus kosong (hanya . dan ..)
 
 > `php.ini` di `public_html` dibuat oleh MultiPHP INI Editor; setelah clone selesai boleh
 > dikembalikan: `mv ~/backup_public_html_default/php.ini ~/public_html/`.
-> Kalau ada folder `cgi-bin` atau `.well-known`, pindahkan juga dulu.
+> Kalau ada folder `cgi-bin`, pindahkan juga dulu.
+
+> **Penting — `.well-known` tidak bisa dipindahkan.** Folder itu dibuat oleh AutoSSL dan
+> pemiliknya `root`, jadi `mv` gagal walaupun `public_html` milik Anda. **Jangan dihapus**
+> (dipakai untuk perpanjangan SSL). Karena itu `git clone <url> .` tetap ditolak
+> (*destination path '.' already exists and is not an empty directory*).
+> Pakai cara ini — clone ke folder sementara, lalu pindahkan isinya ke `public_html`:
+
+```bash
+cd ~
+git clone https://github.com/sitakkang/apoteknaraya.git ~/apoteknaraya-clone
+cd ~/apoteknaraya-clone
+shopt -s dotglob          # supaya .git, .htaccess, .gitignore ikut terpindah
+mv * ~/public_html/
+shopt -u dotglob
+cd ~ && rmdir ~/apoteknaraya-clone
+
+cd ~/public_html
+git status --short        # tanpa output = repo sudah aktif di public_html
+ls -la                    # index.php, app/, .htaccess, .git, .well-known
+```
+
+Hasil akhirnya identik dengan clone langsung; `.well-known` tetap di tempatnya.
 
 ### 6.4 Clone ke `public_html`
 
@@ -462,6 +484,7 @@ Setting khusus server harus lewat file yang tidak ada di repo: `database.php`, `
 | `Update from Remote` gagal / minta login | Deploy key belum ditambahkan atau token salah/expired. Ulangi Bagian 3. |
 | `git pull` gagal: *Your local changes would be overwritten* | Ada file repo yang diedit di server. Jalankan `git checkout -- <nama file>` (buang edit server) atau pindahkan setting ke `environment.php`/`database.php`. |
 | `fatal: destination path '.' already exists and is not an empty directory` | `public_html` masih berisi file (termasuk file tersembunyi). Kosongkan dulu — Bagian 6.3 — atau clone ke nama folder lain: `git clone <url> apoteknaraya` lalu pindahkan isinya. |
+| Sama, padahal `ls` sudah tidak menampilkan apa pun | Sisa file tersembunyi: `ls -la` (biasanya `.well-known` milik `root` dari AutoSSL). Jangan dihapus → pakai clone ke folder sementara lalu `mv` isinya (Bagian 6.3). |
 | `ssh: Could not resolve hostname github-apoteknaraya` | Alias SSH tidak terbaca (file `~/.ssh/config` belum ada/salah lokasi). Pakai URL asli `git@github.com:sitakkang/apoteknaraya.git` + `GIT_SSH_COMMAND`/`core.sshCommand` seperti Bagian 6.4. |
 | `Permission denied (publickey)` | Public key belum ter-paste di GitHub **Deploy keys**, atau kunci salah. Uji: `ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes -T git@github.com`. |
 | `~/.ssh/config` tidak berpengaruh di shell cPanel | Shell cPanel bisa berjalan di jail. Solusi paling pasti: `git config core.sshCommand "ssh -i ~/.ssh/apoteknaraya -o IdentitiesOnly=yes"` di dalam repo. |
