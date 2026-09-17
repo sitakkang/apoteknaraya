@@ -110,7 +110,7 @@
         <div class="kop-instansi">PRAKTEK DOKTER UMUM</div>
         <div class="kop-dokter"><?= htmlspecialchars($row->skbs_doct_name ?: '_________________') ?></div>
         <?php if (!empty($row->nip)): ?>
-        <div class="kop-nip">NIP. <?= htmlspecialchars($row->nip) ?></div>
+        <div class="kop-nip">NIP. <?= htmlspecialchars((string) $row->nip) ?></div>
         <?php endif; ?>
         <div class="kop-alamat">
             Jl. Poros Transmigrasi, Ds. Keurea, Kec. Bahodopi, Morowali &nbsp;|&nbsp; Telp. 082190597990
@@ -181,7 +181,7 @@
             <div class="ttd-qr"><?= isset($qrcode) ? '<img src="'.$qrcode.'" alt="QR Code">' : '' ?></div>
             <p class="ttd-name"><?= htmlspecialchars($row->skbs_doct_name ?: '_________________') ?></p>
             <?php if (!empty($row->nip)): ?>
-            <p class="ttd-nip">NIP. <?= htmlspecialchars($row->nip) ?></p>
+            <p class="ttd-nip">NIP. <?= htmlspecialchars((string) $row->nip) ?></p>
             <?php endif; ?>
         </div>
     </div>

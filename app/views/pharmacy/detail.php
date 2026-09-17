@@ -11,23 +11,23 @@
                 <div class="ds-detail-grid-2col">
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">NO. RM</span>
-                        <span class="ds-detail-value ds-detail-code"><?= htmlspecialchars($row->trans_patient_code) ?: '-' ?></span>
+                        <span class="ds-detail-value ds-detail-code"><?= htmlspecialchars((string) $row->trans_patient_code) ?: '-' ?></span>
                     </div>
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">Nama Pasien</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->patient_name) ?></span>
+                        <span class="ds-detail-value"><?= htmlspecialchars((string) $row->patient_name) ?></span>
                     </div>
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">Perusahaan</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->trans_patient_company) ?: '<span class="text-muted">-</span>' ?></span>
+                        <span class="ds-detail-value"><?= htmlspecialchars((string) $row->trans_patient_company) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">Telepon</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->trans_patient_phone) ?: '<span class="text-muted">-</span>' ?></span>
+                        <span class="ds-detail-value"><?= htmlspecialchars((string) $row->trans_patient_phone) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>
                     <div class="ds-detail-field">
                         <span class="ds-detail-label">Dokter</span>
-                        <span class="ds-detail-value"><?= htmlspecialchars($row->doct_name) ?: '<span class="text-muted">-</span>' ?></span>
+                        <span class="ds-detail-value"><?= htmlspecialchars((string) $row->doct_name) ?: '<span class="text-muted">-</span>' ?></span>
                     </div>
                 </div>
             </div>
@@ -56,9 +56,9 @@
                         <?php $no=1; foreach ($obat as $o): ?>
                         <tr>
                             <td><?= $no++ ?></td>
-                            <td><?= htmlspecialchars($o->trans_obat_name) ?></td>
+                            <td><?= htmlspecialchars((string) $o->trans_obat_name) ?></td>
                             <td class="text-center"><?= intval($o->trans_obat_qty) ?></td>
-                            <td><?= htmlspecialchars($o->trans_obat_dosis ?: '-') ?></td>
+                            <td><?= htmlspecialchars((string) $o->trans_obat_dosis ?: '-') ?></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -81,9 +81,9 @@
                 <?php foreach ($racikan as $p): ?>
                 <div style="border:1px solid var(--ds-border);border-radius:6px;margin-bottom:10px;overflow:hidden;">
                     <div style="background:linear-gradient(135deg,#e8f5e9,#f1faf3);padding:8px 12px;font-weight:600;font-size:13px;color:#1b5e20;border-bottom:1px solid var(--ds-border);">
-                        <i class="fa fa-mortar-pestle"></i> <?= htmlspecialchars($p->pulv_name) ?>
+                        <i class="fa fa-mortar-pestle"></i> <?= htmlspecialchars((string) $p->pulv_name) ?>
                         <span style="font-size:11px;color:#666;margin-left:10px;font-weight:400;">
-                            Dosis: <?= htmlspecialchars($p->pulv_dosis) ?> &bull; Jml: <?= intval($p->pulv_qty) ?> bks
+                            Dosis: <?= htmlspecialchars((string) $p->pulv_dosis) ?> &bull; Jml: <?= intval($p->pulv_qty) ?> bks
                         </span>
                     </div>
                     <div style="padding:6px 12px;">
@@ -104,16 +104,16 @@
                                 ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
-                                    <td><?= htmlspecialchars($o->trans_obat_name) ?></td>
+                                    <td><?= htmlspecialchars((string) $o->trans_obat_name) ?></td>
                                     <td class="text-center"><?= intval($o->trans_obat_qty) ?></td>
-                                    <td><?= htmlspecialchars($o->trans_obat_dosis ?: '-') ?></td>
+                                    <td><?= htmlspecialchars((string) $o->trans_obat_dosis ?: '-') ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                         <?php if (!empty($p->pulv_notes)): ?>
                         <div style="margin-top:4px;padding:4px 8px;background:#f8f9fa;border-radius:4px;font-size:11px;color:#555;">
-                            <strong>Catatan:</strong> <?= nl2br(htmlspecialchars($p->pulv_notes)) ?>
+                            <strong>Catatan:</strong> <?= nl2br(htmlspecialchars((string) $p->pulv_notes)) ?>
                         </div>
                         <?php endif; ?>
                     </div>

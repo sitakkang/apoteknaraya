@@ -82,7 +82,22 @@ date_default_timezone_set('Asia/Makassar');
 switch (ENVIRONMENT)
 {
 	case 'development':
-		error_reporting(-1);
+		/*
+		 * CATATAN PHP 8.x
+		 * ---------------
+		 * Aplikasi ini awalnya ditulis untuk PHP 5.x/7.4. Di PHP 8.1+ muncul
+		 * banyak E_DEPRECATED yang sifatnya KOSMETIK, contohnya:
+		 *   htmlspecialchars(): Passing null to parameter #1 ... is deprecated
+		 * (nilai NULL dari database tetap dianggap string kosong, hasil
+		 *  tampilan tidak berubah) dan pola lain seperti parameter opsional
+		 * sebelum parameter wajib pada pustaka pihak ketiga.
+		 *
+		 * Karena itu E_DEPRECATED disembunyikan agar halaman tidak dipenuhi
+		 * notice. Warning, Error, dan Notice biasa tetap tampil.
+		 * Ingin melihat semua deprecation lagi? ubah baris di bawah menjadi
+		 * error_reporting(-1);
+		 */
+		error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 		ini_set('display_errors', 1);
 	break;
 
