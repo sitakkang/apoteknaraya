@@ -42,18 +42,13 @@ class M_obat extends CI_Model {
     private function _dt_query($search, $order_col, $order_dir) {
         $columns = array(
             1 => 'obat_name',
-            2 => 'obat_satuan',
-            3 => 'obat_price',
-            4 => 'obat_status',
+            2 => 'obat_status',
         );
 
         $this->db->from($this->table);
 
         if (!empty($search)) {
-            $this->db->group_start();
             $this->db->like('obat_name', $search);
-            $this->db->or_like('obat_satuan', $search);
-            $this->db->group_end();
         }
 
         if (isset($columns[$order_col])) {

@@ -25,8 +25,6 @@
                         <tr>
                             <th width="40">No</th>
                             <th>Nama Obat</th>
-                            <th width="120">Satuan</th>
-                            <th width="150">Harga</th>
                             <th width="80">Status</th>
                             <th width="120" class="text-center">Aksi</th>
                         </tr>

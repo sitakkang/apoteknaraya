@@ -22,7 +22,6 @@ class Obat extends CI_Controller {
             'lib/datatables/dataTables.bootstrap.min.js',
             'lib/datatables/dataTables.fixedColumns.min.js',
             'lib/sweetalert/sweetalert2.all.min.js',
-            'lib/mask/jquery.mask.min.js',
             'src/js/admin/obat.js',
         );
         $data['panel'] = '<i class="fa fa-pills"></i> &nbsp;<b>Manajemen Obat</b>';
@@ -63,9 +62,7 @@ class Obat extends CI_Controller {
                 'DT_RowId'  => $row->id_obat,
                 '0'         => $i++,
                 '1'         => htmlspecialchars($row->obat_name),
-                '2'         => htmlspecialchars($row->obat_satuan),
-                '3'         => 'Rp ' . number_format($row->obat_price, 0, ',', '.'),
-                '4'         => $status,
+                '2'         => $status,
             );
         }
 
@@ -92,10 +89,9 @@ class Obat extends CI_Controller {
     }
 
     public function act_add() {
+        // Satuan & harga tidak dipakai lagi (obat diinput manual di pemeriksaan)
         $data = array(
             'obat_name'   => strtoupper(trim($this->input->post('obat_name'))),
-            'obat_satuan' => strtoupper(trim($this->input->post('obat_satuan'))),
-            'obat_price'  => str_replace(array(',', '.'), '', trim($this->input->post('obat_price'))),
             'obat_status' => 1,
         );
 
@@ -112,8 +108,6 @@ class Obat extends CI_Controller {
 
         $data = array(
             'obat_name'   => strtoupper(trim($this->input->post('obat_name'))),
-            'obat_satuan' => strtoupper(trim($this->input->post('obat_satuan'))),
-            'obat_price'  => str_replace(array(',', '.'), '', trim($this->input->post('obat_price'))),
         );
 
         $this->M_obat->update($id, $data);

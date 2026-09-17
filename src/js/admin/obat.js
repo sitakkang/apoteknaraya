@@ -14,8 +14,6 @@ $(document).ready(function () {
             { data: '0', width: '40px', orderable: false, searchable: false },
             { data: '1' },
             { data: '2', className: 'text-center' },
-            { data: '3', className: 'text-right' },
-            { data: '4', className: 'text-center' },
             {
                 data: null,
                 width: '120px',
@@ -53,8 +51,6 @@ $(document).ready(function () {
         $('.modal-dialog').addClass('ds-modal');
         if (size) $('.modal-dialog').addClass(size);
         $('#MyModal').modal('show');
-        // Init mask for price
-        $('#obat_price, #edit_obat_price').mask('#.##0', { reverse: true });
     }
 
     $('#add_btn').on('click', function () {
@@ -71,13 +67,9 @@ $(document).ready(function () {
 
     $(document).on('click', '#save_add_btn', function () {
         var payload = {
-            obat_name:   $('#obat_name').val(),
-            obat_satuan: $('#obat_satuan').val(),
-            obat_price:  $('#obat_price').val(),
+            obat_name: $('#obat_name').val(),
         };
         if (!payload.obat_name) { notifNo('Silakan isi nama obat'); return false; }
-        if (!payload.obat_satuan) { notifNo('Silakan isi satuan'); return false; }
-        if (!payload.obat_price) { notifNo('Silakan isi harga'); return false; }
 
         $.post(site_url + 'obat/act_add', payload, function (res) {
             if (res.status == 1) notifNo(res.notif);
@@ -100,10 +92,8 @@ $(document).ready(function () {
 
     $(document).on('click', '#save_edit_btn', function () {
         var payload = {
-            id:          $('#edit_id').val(),
-            obat_name:   $('#edit_obat_name').val(),
-            obat_satuan: $('#edit_obat_satuan').val(),
-            obat_price:  $('#edit_obat_price').val(),
+            id:        $('#edit_id').val(),
+            obat_name: $('#edit_obat_name').val(),
         };
         if (!payload.obat_name) { notifNo('Silakan isi nama obat'); return false; }
 

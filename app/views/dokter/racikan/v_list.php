@@ -27,7 +27,6 @@
                     <th width="30">No</th>
                     <th>Obat</th>
                     <th width="60">Qty</th>
-                    <th width="80">Satuan</th>
                     <th width="110">Dosis</th>
                 </tr>
             </thead>
@@ -41,7 +40,6 @@
                     <td><?= $no++ ?></td>
                     <td><?= htmlspecialchars($o->trans_obat_name) ?></td>
                     <td class="text-center"><?= intval($o->trans_obat_qty) ?></td>
-                    <td><?= htmlspecialchars($o->trans_obat_satuan) ?></td>
                     <td><?= htmlspecialchars($o->trans_obat_dosis ?: '-') ?></td>
                 </tr>
                 <?php endforeach; ?>
