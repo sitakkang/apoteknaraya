@@ -23,9 +23,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$config['base_url'] .= "://".$_SERVER['HTTP_HOST'];
-$config['base_url'] .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
+/*
+| Deteksi otomatis: aman untuk HTTPS di belakang proxy/reverse-proxy dan
+| aman dijalankan lewat CLI. Bisa dipaksa tetap lewat environment.php:
+|     define('APP_BASE_URL', 'https://apotek-naraya.com/');
+*/
+$__proto = 'http';
+if ((isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on' || $_SERVER['HTTPS'] === '1'))
+	|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+	|| (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443))
+{
+	$__proto = 'https';
+}
+$__host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+$__path = isset($_SERVER['SCRIPT_NAME']) ? str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']) : '/';
+$config['base_url'] = defined('APP_BASE_URL') ? APP_BASE_URL : $__proto.'://'.$__host.$__path;
 
 /*
 |--------------------------------------------------------------------------
@@ -422,8 +434,14 @@ $config['sess_regenerate_destroy'] = FALSE;
 $config['cookie_prefix']	= '';
 $config['cookie_domain']	= '';
 $config['cookie_path']		= '/';
-$config['cookie_secure']	= FALSE;
-$config['cookie_httponly'] 	= FALSE;
+/*
+| Di production (domain sudah HTTPS: https://apotek-naraya.com) cookie hanya
+| dikirim lewat HTTPS + tidak bisa dibaca JavaScript. Kalau saat uji coba di
+| server masih memakai http:// dan login gagal, ubah jadi FALSE sementara.
+| ENVIRONMENT diisi 'production' lewat file environment.php (lihat index.php).
+*/
+$config['cookie_secure']	= (ENVIRONMENT === 'production');
+$config['cookie_httponly'] 	= TRUE;
 
 /*
 |--------------------------------------------------------------------------

@@ -1,3 +1,24 @@
 app/logs/**
+
+# Sesi: file sesi jangan di-commit, tapi folder + index.html tetap ikut
+app/sessions/*
+!app/sessions/index.html
+
+# Konfigurasi per-server (dibuat dari database.sample.php di tiap server)
 app/config/database.php
+
+# Penanda environment per-server (development/production) — lihat index.php
+environment.php
+
+# Konfigurasi deploy cPanel (beda-beda tiap akun hosting, tidak boleh ikut repo)
+.cpanel.yml
+
+# Berkas berisi data sensitif — JANGAN pernah di-commit/deploy
+*.sql
+generate_password.php
+sys_backup/
+*.zip
+
+# Cache/sementara
 img/temp-qrcode/**
+*.bak

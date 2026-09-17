@@ -1,316 +1,385 @@
-# PANDUAN DEPLOY KE HOSTING DOMAINESIA
+# Panduan Deploy Apotek Naraya ke DomaiNesia — via Git Clone
 
-Aplikasi: **Apotek Naraya** — CodeIgniter **3.1.13**, PHP + MySQL/MariaDB
-Target: hosting cPanel DomaiNesia (`public_html`), sampai aplikasi siap dipakai.
-
-> ⚠️ **Sebelum upload ke `public_html`, jangan sertakan file/folder ini:**
-> `db_apoteknaraya.sql`, `db_core_v4.sql`, `INITIATE PROJECT TRUNCATE TABLE.sql`,
-> `generate_password.php`, folder `sys_backup/`, folder `.git/`, file zip, dan panduan ini.
-> File `.sql` bisa diunduh siapa saja lewat browser — isinya seluruh data pasien.
-
----
-
-## 0. Yang sudah disiapkan & info yang perlu Anda kumpulkan
-
-**Sudah disiapkan di komputer Anda:**
-
-| Item | Lokasi |
+| Item | Nilai |
 |---|---|
-| Dump database (1,93 MB, 27 tabel, sudah ada `DROP TABLE` + `CREATE TABLE`) | `c:\xampp\mysql\backup\db_narayaapotek_20260917.sql` |
-| Script reset data transaksi (untuk serah terima bersih) | `INITIATE PROJECT TRUNCATE TABLE.sql` |
+| **Domain produksi** | `https://apotek-naraya.com` |
+| **Repository** | `https://github.com/sitakkang/apoteknaraya.git` |
+| **Branch** | `main` |
+| **Framework** | CodeIgniter 3.1.13 (PHP 7.4) |
+| **Database aplikasi** | `db_narayaapotek` (27 tabel) |
+| **File dump untuk server** | `C:\xampp\mysql\backup\db_narayaapotek_20260917.sql` (1,93 MB) |
 
-**Yang perlu dicatat dari cPanel DomaiNesia nanti:**
+> Cara kerja singkat: **kode tidak di-upload manual**, tetapi di-`git clone` langsung di server dari GitHub.
+> Update berikutnya cukup `git push` dari komputer → klik **Deploy** di cPanel.
 
-- [ ] Nama domain yang dipakai
-- [ ] Nama database (biasanya berprefix akun, contoh `userabc_apotek`)
-- [ ] Username database
-- [ ] Password database
-- [ ] Host database → **`localhost`** (di cPanel DomaiNesia hampir selalu `localhost`)
+```mermaid
+flowchart LR
+    A[PC lokal<br>edit kode] -->|git push| B[GitHub<br>repo private]
+    B -->|cPanel Git Version Control<br>Update from Remote| C[Server DomaiNesia<br>clone di server]
+    C -->|Deploy HEAD Commit| D[public_html<br>apotek-naraya.com]
+    D --> E[(Database<br>DB_apotek)]
+```
 
-**Kebutuhan server (sudah dicek dari kode aplikasi):**
+---
 
-| Kebutuhan | Dipakai oleh |
+## 1. ⚠️ WAJIB DIBACA DULU: Amankan repo GitHub
+
+Repo `sitakkang/apoteknaraya` saat ini masih **PUBLIC** dan riwayat commit-nya masih menyimpan file sensitif
+(`db_apoteknaraya.sql` = data pasien, `generate_password.php`, `sys_backup/`).
+Artinya: siapa pun yang tahu URL repo bisa mengunduh data pasien dari riwayat commit, **walaupun file itu sudah tidak dilacak lagi**.
+
+Urutan yang benar: **jadikan private → bersihkan riwayat → baru clone ke server.**
+
+### 1.1 Jadikan repo private (30 detik, lakukan sekarang)
+
+1. Buka `https://github.com/sitakkang/apoteknaraya/settings`
+2. Scroll paling bawah → **Danger Zone** → **Change repository visibility** → **Change to private** → ketik nama repo untuk konfirmasi.
+
+### 1.2 Bersihkan riwayat commit (pilih salah satu)
+
+#### Opsi A — hapus file dari seluruh riwayat (riwayat lama tetap ada)
+
+```powershell
+# sekali saja: pip install git-filter-repo
+cd C:\xampp\htdocs\apoteknaraya
+
+git filter-repo --invert-paths `
+  --path db_apoteknaraya.sql `
+  --path db_core_v4.sql `
+  --path "INITIATE PROJECT TRUNCATE TABLE.sql" `
+  --path db_narayaapotek.sql `
+  --path generate_password.php `
+  --path sys_backup `
+  --path app/config/database.php
+
+git remote add origin https://github.com/sitakkang/apoteknaraya.git   # filter-repo menghapus remote
+git push origin main --force
+```
+
+#### Opsi B — mulai riwayat baru (paling cepat & paling pasti bersih)
+
+```powershell
+cd C:\xampp\htdocs\apoteknaraya
+
+git checkout --orphan clean-main       # buat branch baru tanpa riwayat
+git add -A                             # .gitignore sudah menghalangi file sensitif
+git commit -m "Initial commit - Apotek Naraya (riwayat bersih)"
+git branch -D main
+git branch -m main
+git push origin main --force
+```
+
+> Karena GitHub masih bisa menyajikan commit lama lewat cache/URL commit, untuk kepastian 100%:
+> **Settings → Delete this repository**, lalu buat repo baru dengan nama sama (mode **Private**), dan `git push -u origin main`.
+> Data lokal Anda tidak terpengaruh — yang dihapus hanya salinan di GitHub.
+
+### 1.3 Ganti kredensial yang sudah pernah bocor
+
+- Password database MySQL cPanel.
+- Password user aplikasi: `admin`, `adminapotek`, `ahmad` (password awal `adminutama`).
+- Token/kunci yang pernah ditulis ke file di dalam repo.
+
+---
+
+## 2. Commit & push perubahan dari komputer
+
+Semua perubahan yang sudah disiapkan di workspace ini (`.gitignore`, `.htaccess`, `index.php`, `app/config/config.php`,
+`app/config/database.sample.php`, penghapusan file sensitif dari repo) belum di-commit. Jalankan:
+
+```powershell
+cd C:\xampp\htdocs\apoteknaraya
+
+git add -A
+git commit -m "chore: keluarkan file sensitif dari repo + siapkan deploy git (private + .cpanel) "
+git push origin main
+```
+
+Yang **tidak boleh** ikut ter-commit (sudah otomatis diabaikan `.gitignore`):
+
+| File / folder | Alasan |
 |---|---|
-| PHP 5.6–7.4 (**disarankan 7.4**) | CodeIgniter 3.1.13 |
-| Ekstensi `mysqli` | koneksi database |
-| Ekstensi `gd` (fungsi `ImagePng`) | QR Code di SKS/SKBS/SKMB/SKKB |
-| Ekstensi `mbstring`, `json` | helper & library CI |
-| Folder yang bisa ditulis PHP | `app/sessions/`, `app/cache/`, `app/logs/`, `img/temp-qrcode/`, `img/avatar/` |
+| `app/config/database.php` | kredensial database beda tiap server |
+| `environment.php` | penanda environment (production/development) |
+| `.cpanel.yml` | path akun hosting beda tiap server |
+| `*.sql`, `generate_password.php`, `sys_backup/`, `*.zip` | data sensitif / arsip |
+| `app/sessions/*` (kecuali `index.html`) | file sesi pengguna |
+| `app/logs/**`, `img/temp-qrcode/**` | file sementara |
 
 ---
 
-## 1. Isolasi sesi (SUDAH saya terapkan — pembeda dari project asal)
+## 3. Siapkan akses GitHub dari server
 
-Karena aplikasi ini clone, dua hal ini **wajib berbeda** dari project asal, kalau tidak
-login di aplikasi satu akan menendang sesi aplikasi lain (browser mengirim cookie sesi
-yang sama ke keduanya). Sudah diubah di `app/config/config.php`:
+Repo private → server butuh kunci akses. Pilih salah satu.
 
-```php
-$config['sess_cookie_name'] = 'narayaapotek_sess';   // project asal: imip_core4
-$config['sess_save_path']   = APPPATH.'sessions';    // project asal: sys_get_temp_dir()
-$config['encryption_key']   = 'A7F3C1D9E4B8062A5C7D1E9F3B6A8C40';  // unik per aplikasi
-```
+### 3.1 Deploy Key (rekomendasi, read-only)
 
-Bukti sudah jalan (dites di lokal): file sesi terbentuk di `app/sessions/narayaapotek_sess...`.
+1. cPanel → **SSH Access** → **Manage SSH Keys** → **Generate a New Key** (nama bebas, password kosongkan).
+2. Klik **View/Download** pada *Public Key* → copy isinya.
+3. GitHub → repo → **Settings → Deploy keys → Add deploy key** → paste → beri nama `domenesia-server` → **biarkan "Allow write access" tidak dicentang** → Add.
+4. Untuk URL clone pakai bentuk SSH: `git@github.com:sitakkang/apoteknaraya.git`
 
-> Kalau nanti Anda clone lagi untuk klien lain, ganti 3 nilai di atas (nama cookie,
-> folder sesi, encryption key) supaya tidak saling bertabrakan.
+### 3.2 Personal Access Token (alternatif, kalau SSH tidak tersedia)
 
----
+1. GitHub → foto profil → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+2. Repository access: **Only select repositories → apoteknaraya** → Permissions: **Contents = Read-only** → Generate.
+3. URL clone menjadi: `https://USERNAME_GITHUB:TOKEN@github.com/sitakkang/apoteknaraya.git`
 
-## 2. Persiapan di komputer lokal
-
-1. Buat folder kerja baru, misalnya `Kirim-Domainesia/`, lalu salin isi project ke dalamnya.
-
-2. **Keluarkan** item berikut dari folder kiriman:
-   - `sys_backup/` (salinan CI lama, tidak dipakai aplikasi)
-   - `.git/` dan `.gitignore`
-   - `db_apoteknaraya.sql`, `db_core_v4.sql`, `INITIATE PROJECT TRUNCATE TABLE.sql`, `generate_password.php`
-   - `PANDUAN-DEPLOY-DOMENESIA.md`
-
-3. Isi folder kiriman seharusnya seperti ini:
-
-```
-index.php
-.htaccess
-app/        (config, controllers, models, views, libraries, sessions, cache, logs)
-img/        (avatar, temp-qrcode, noimage.png, loading.gif)
-lib/        (bootstrap, datatables, jquery, fontawesome, dll)
-src/        (css, js, json/main_menu.json, sub_menu.json)
-sys/        (core CodeIgniter — JANGAN diubah/dibuang)
-```
-
-4. Sebelum di-zip, cek 3 file konfigurasi ini (detailnya di bagian 6–8):
-   - `index.php` → `ENVIRONMENT`
-   - `app/config/database.php` → kredensial DB
-   - `app/config/config.php` → sudah beres (bagian 1)
-
-5. Zip seluruh isi folder kiriman menjadi **`apoteknaraya.zip`**.
+> Token disimpan di `~/repositories/.../.git/config` — jangan dibagikan, dan cabut (revoke) bila tidak dipakai lagi.
 
 ---
 
-## 3. Login cPanel & upload project
+## 4. CARA A — Clone langsung ke `public_html` (paling singkat)
 
-**Login cPanel:** `https://namadomain.com/cpanel` (atau dari MyDomaiNesia → menu Hosting → Login cPanel).
+1. Backup dulu isi `public_html` bila sudah ada file (cPanel → **File Manager** → zip / download).
+   Folder **harus kosong** (sisakan `cgi-bin` bila ada).
+2. cPanel → **Files → Git™ Version Control** → **Create**.
+3. Isi form:
 
-Pilih salah satu cara:
+   | Field | Isi |
+   |---|---|
+   | **Clone URL** | `git@github.com:sitakkang/apoteknaraya.git` (atau URL HTTPS + token) |
+   | **Repository Path** | `public_html` |
+   | **Repository Name** | `apoteknaraya` |
 
-**Cara A — File Manager (paling mudah)**
-1. cPanel → **File Manager** → masuk folder `public_html`.
-2. Klik **Upload** → pilih `apoteknaraya.zip` → tunggu sampai 100% → **Go Back**.
-3. Klik kanan `apoteknaraya.zip` → **Extract** → hasilnya menaruh `index.php`, `app/`, `lib/`, `src/`, `sys/`, `img/` langsung di `public_html`.
-4. Hapus `apoteknaraya.zip`.
+4. Klik **Create**. cPanel men-clone seluruh isi repo ke `public_html`.
+5. Sudah otomatis aktif di `https://apotek-naraya.com` — lanjut ke **Bagian 7** (setup wajib).
 
-> Kalau `public_html` sudah berisi situs lain, buat subfolder (mis. `public_html/apotek`)
-> atau pakai subdomain, lalu tambahkan `RewriteBase` (lihat bagian 8).
-
-**Cara B — SSH** (kalau paket Anda ada SSH): `scp apoteknaraya.zip user@server:~/` → `unzip` → pindahkan isi ke `public_html`.
-
-**Cara C — Jasa migrasi DomaiNesia**: DomaiNesia menyediakan migrasi gratis; bisa dipakai kalau Anda tidak mau upload manual.
-
-Verifikasi struktur lewat File Manager: `public_html/index.php` harus ada, dan ada folder `app`.
-
----
-
-## 4. Buat database & user-nya (cPanel → MySQL® Databases)
-
-1. **Create New Database** → nama: `apotek` → cPanel menambah prefix akun → jadi mis. `userabc_apotek`. **Catat nama lengkapnya.**
-2. **Add New User** → username: `apotek` → cPanel jadikan `userabc_apotek` → password: pakai yang kuat → **Catat.**
-3. **Add User To Database** → pilih user + database di atas → **ALL PRIVILEGES** → Make Changes.
-4. Host database: **`localhost`**.
+> Kalau cPanel menolak (`The repository path must be an empty directory` / path di dalam document root tidak diizinkan),
+> gunakan **Cara B** di bawah — hasil akhirnya sama.
+>
+> ⚠️ Di Cara A, jangan klik **Deploy HEAD Commit** kecuali Anda memang sudah membuat `.cpanel.yml`
+> (lihat Cara B), karena tombol itu menjalankan file tersebut.
 
 ---
 
-## 5. Import database
+## 5. CARA B — Clone ke luar `public_html`, deploy ke `public_html` (lebih aman & disarankan)
 
-1. cPanel → **phpMyAdmin** → klik nama database `userabc_apotek` di kiri.
-2. Tab **Import** → **Choose File** → pilih `db_narayaapotek_20260917.sql` → **Go**.
-3. Tunggu sampai muncul "Import has been successfully finished".
-4. Cek: di kiri harus muncul 27 tabel, termasuk `conf_users`, `conf_level`, `conf_menu`, `ms_diagnosa`, `trans_visit`, `sks`, `skbs`, `skmb`.
+Kode tersimpan di luar document root, sehingga `.git` tidak pernah ada di area web.
+Sekaligus membuat `database.php` / `environment.php` **tidak pernah tertimpa** saat deploy.
 
-Kalau phpMyAdmin menolak karena ukuran:
-- Kompres dulu jadi `.zip`/`.gz` (phpMyAdmin menerima file terkompres), **atau**
-- Import per bagian (potong per ~2 MB), **atau**
-- Minta bantuan support DomaiNesia (live chat 24 jam).
+1. cPanel → **Git™ Version Control** → **Create**
+   - **Clone URL**: `git@github.com:sitakkang/apoteknaraya.git`
+   - **Repository Path**: `repositories/apoteknaraya`
+   - **Repository Name**: `apoteknaraya`
+2. Buat file **`.cpanel.yml`** di dalam repo tersebut pada server
+   (cPanel → **File Manager** → masuk `repositories/apoteknaraya` → **+ File** → nama `.cpanel.yml`) dan isi dengan
+   (ganti `USERCPANEL` dengan username cPanel Anda, mis. `apotekna`):
 
-> **Untuk serah terima ke klien dengan data kosong:** setelah import berhasil, buka tab
-> **SQL** di phpMyAdmin dan jalankan isi `INITIATE PROJECT TRUNCATE TABLE.sql`
-> (10 tabel transaksi dikosongkan; master data seperti user, level, menu, diagnosa, wilayah tetap ada).
-
----
-
-## 6. Update akses database di aplikasi
-
-Buka **File Manager** → `public_html/app/config/database.php` → **Edit** → ubah 4 baris ini:
-
-```php
-$db['default'] = array(
-	'dsn'	=> '',
-	'hostname' => 'localhost',                 // biarkan localhost
-	'username' => 'userabc_apotek',            // ← username database dari cPanel
-	'password' => 'PasswordKuatAnda',          // ← password database dari cPanel
-	'database' => 'userabc_apotek',            // ← nama database lengkap (dengan prefix)
-	'dbdriver' => 'mysqli',
-	'dbprefix' => '',
-	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),   // otomatis FALSE saat production
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
-);
-```
-
-Simpan. Tidak ada baris lain yang perlu diubah — `base_url` di `app/config/config.php`
-sudah otomatis mengikuti domain yang dipakai, jadi tidak perlu ditulis manual.
-
----
-
-## 7. Set mode production (matikan tampilan error)
-
-Buka `public_html/index.php` → cari baris (sekitar baris 57):
-
-```php
-define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
-```
-
-Ubah menjadi:
-
-```php
-define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'production');
-```
-
-Efeknya: pesan error PHP tidak tampil ke pengunjung, log disimpan di `app/logs/`,
-dan `db_debug` otomatis mati (pesan error SQL tidak bocor ke halaman).
-
-**Alternatif tanpa mengubah `index.php`** — tambahkan di `.htaccess`:
-
-```apache
-SetEnv CI_ENV production
-```
-
----
-
-## 8. Versi PHP, ekstensi, permission, dan `.htaccess`
-
-**a. Versi PHP** — cPanel → **MultiPHP Manager** (atau **Select PHP Version**) → pilih domain → **PHP 7.4**
-(kalau hosting hanya menyediakan 8.x, aplikasi masih bisa jalan tapi akan banyak
-peringatan *deprecated* dari CI 3.1.13; lebih aman minta support mengaktifkan 7.4).
-
-**b. Ekstensi** — di halaman Select PHP Version → **Extensions**, pastikan tercentang:
-`mysqli`, `gd`, `mbstring`, `json`, `zip`, `curl`.
-
-**c. Permission folder** — File Manager → klik kanan folder → **Change Permissions**:
-
-| Folder | Permission |
-|---|---|
-| `app/sessions` | 755 (kalau error, 775) |
-| `app/cache` | 755 |
-| `app/logs` | 755 |
-| `img/temp-qrcode` | 755 |
-| `img/avatar` | 755 |
-
-File lain biarkan 644. Tidak perlu 777.
-
-**d. `.htaccess`** — file `.htaccess` bawaan project sudah benar untuk domain utama
-(`RewriteRule ^(.*)$ ./index.php/$1 [L,QSA]`). Tambahan yang disarankan:
-
-```apache
-# Hapus bila bukan di subfolder
-# RewriteBase /
-
-# Opsional: buang 2 baris sisa percobaan hotlink yang mengarah ke localhost
-# RewriteCond %{HTTP_REFERER} !^$
-# RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost/.*$ [NC]
-```
-
-Kalau aplikasi diletakkan di **subfolder** (mis. `public_html/apotek`), tambahkan
-`RewriteBase /apotek/` dan `DirectoryIndex index.php`.
-
----
-
-## 9. Uji coba sampai "siap pakai" (checklist)
-
-1. [ ] Buka `https://namadomain.com/` → muncul **halaman login** (bukan error 500 / halaman kosong)
-2. [ ] Login dengan akun dari tabel `conf_users` (mis. `adminutama` / Superadmin)
-3. [ ] **Dashboard** tampil + kartu SKS / SKBS / SKMB bulan ini muncul
-4. [ ] Menu **Pengguna** → daftar user tampil
-5. [ ] Menu **Pendaftaran** → daftarkan 1 pasien uji
-6. [ ] Menu **Anamnesa** → kolom Dokter / Diagnosa / Obat / SKS / SKBS / SKMB (tombol modal) bisa dibuka & simpan data
-7. [ ] Menu **Dokter** → halaman pemeriksaan pasien bisa dibuka
-8. [ ] **Cetak SKS / SKBS / SKMB** → QR Code muncul (bagian ini butuh ekstensi GD + folder `img/temp-qrcode` writable)
-9. [ ] Scan QR dari HP → halaman verifikasi (`sks_validate/verify/...`) terbuka & menampilkan data pasien
-10. [ ] Ganti password user → berhasil, lalu login ulang
-11. [ ] Cek `app/logs/` → kalau ada file log berisi error, kirim ke saya
-
-Kalau semua tercentang, aplikasi **siap pakai**.
-
----
-
-## 10. Keamanan — wajib dilakukan sebelum diserahkan
-
-1. **Hapus file sensitif dari `public_html`:**
-   - `db_apoteknaraya.sql`, `db_core_v4.sql` → berisi SELURUH data pasien, bisa diunduh bebas
-   - `INITIATE PROJECT TRUNCATE TABLE.sql` → memperlihatkan struktur tabel
-   - `generate_password.php` → memperlihatkan cara hash password + password default (`adminutama`)
-   - `sys_backup/` → tidak dipakai, buang supaya tidak ada 2 versi framework
-   - `.git/` → riwayat kode bisa diunduh orang lain
-   - `PANDUAN-DEPLOY-DOMENESIA.md` dan file zip sisaupload
-
-2. **Aktifkan SSL**: cPanel → **SSL/TLS Status** → **Run AutoSSL** → pastikan `https://` aktif
-   (DomaiNesia menyediakan SSL gratis). Setelah SSL stabil, di `app/config/config.php` boleh diubah:
-
-   ```php
-   $config['cookie_secure'] = TRUE;   // hanya kirim cookie lewat HTTPS
+   ```yaml
+   ---
+   deployment:
+     tasks:
+       - export DEPLOYPATH=/home/USERCPANEL/public_html
+       - /bin/mkdir -p $DEPLOYPATH/app $DEPLOYPATH/img $DEPLOYPATH/lib $DEPLOYPATH/src $DEPLOYPATH/sys
+       - /bin/cp -Rf app/. $DEPLOYPATH/app/
+       - /bin/cp -Rf img/. $DEPLOYPATH/img/
+       - /bin/cp -Rf lib/. $DEPLOYPATH/lib/
+       - /bin/cp -Rf src/. $DEPLOYPATH/src/
+       - /bin/cp -Rf sys/. $DEPLOYPATH/sys/
+       - /bin/cp -f index.php $DEPLOYPATH/index.php
+       - /bin/cp -f .htaccess $DEPLOYPATH/.htaccess
    ```
 
-   ⚠️ Jangan diaktifkan sebelum SSL benar-benar jalan, nanti login gagal.
+   > `.cpanel.yml` sengaja **tidak** ada di repo (masuk `.gitignore`) karena path akun tiap server berbeda.
+3. cPanel → Git™ Version Control → klik repo → **Update from Remote**, lalu **Deploy HEAD Commit**.
+   Log deploy muncul di panel bawah — pastikan tidak ada `error`.
+4. File aplikasi sekarang ada di `public_html`, dan `public_html/app/config/database.php` milik server **tidak tersentuh**.
 
-3. **Ganti password bawaan** semua akun di menu Pengguna, dan hapus akun yang tidak dipakai.
-
-4. **Blokir akses file yang tidak perlu** (opsional, tambahkan di `.htaccess`:
-
-   ```apache
-   RedirectMatch 403 ^/.*\.(sql|md|log|zip)$
-   ```
-
-5. **Backup rutin**: cPanel → **Backup** (Home Directory + Databases), atau minta
-   DomaiNesia menjadwalkan backup harian (biasanya sudah termasuk di paket).
+> Catatan: deploy hanya menyalin/menimpa, **tidak menghapus** file yang sudah dihapus dari repo.
+> Jika perlu bersih total, hapus isi `public_html` (kecuali `database.php`, `environment.php`, `app/logs`, `app/sessions`)
+> lalu klik **Deploy HEAD Commit** lagi.
 
 ---
 
-## 11. Troubleshooting
+## 6. CARA C — Clone via SSH (hanya bila akun punya akses SSH)
 
-| Gejala | Penyebab paling mungkin & solusinya |
-|---|---|
-| **HTTP 500** di semua halaman | Lihat `app/logs/`. Umumnya: versi PHP tidak cocok, ekstensi kurang, atau `.htaccess` tidak didukung. Cek juga permission folder. |
-| Halaman **putih/kosong** | `ENVIRONMENT` masih `development` tapi `display_errors` mati, atau ada fatal error. Cek log di `app/logs/`. |
-| **"Unable to connect to your database"** | Username/password/nama database salah, atau user belum di-*Add User To Database*, atau hostname bukan `localhost`. |
-| **Login berhasil tapi kembali ke halaman login terus** | Folder `app/sessions` tidak writable (set 755/775), **atau** nama cookie sesi sama dengan aplikasi lain di domain yang sama. |
-| Bisa login lalu **tiba-tiba logout sendiri** | `sess_expiration` = 3600 (1 jam) — memang begitu; jika mengganggu naikkan nilainya. |
-| **404 di semua menu** (URL tanpa `index.php` gagal) | `mod_rewrite`/`.htaccess` tidak jalan. Solusi cepat: set `$config['index_page'] = 'index.php';` di `app/config/config.php` (URL jadi memuat `index.php`). |
-| **QR Code tidak muncul** saat cetak | Ekstensi `gd` belum aktif, atau `img/temp-qrcode/` tidak writable. |
-| **Import SQL gagal** | Kompres ke `.gz`, atau potong jadi beberapa bagian, atau hubungi support DomaiNesia. |
-| Preview cetak **terpotong/miring** | Bukan masalah hosting — atur ukuran kertas A4 & margin saat print (Ctrl+P). |
-| Kapasitas hosting penuh | Bersihkan `app/logs/`, `app/cache/`, `img/temp-qrcode/` (isi QR lama boleh dihapus). |
+```bash
+cd ~
+git clone git@github.com:sitakkang/apoteknaraya.git apotek-repo
+cd ~/apotek-repo
 
----
+# update rutin
+git pull origin main
 
-## 12. Kalau nanti clone lagi untuk klien lain
-
-Ubah 3 hal ini di `app/config/config.php`, dan buat database baru:
-
-```php
-$config['sess_cookie_name'] = 'narayaapotek2_sess';   // nama unik
-$config['sess_save_path']   = APPPATH.'sessions';     // sudah otomatis khusus aplikasi ini
-$config['encryption_key']   = '<32 karakter hex unik>';
+# salin ke web root (tanpa .git)
+rsync -a --exclude '.git' --exclude 'database.php' --exclude 'environment.php' \
+      ~/apotek-repo/ ~/public_html/
 ```
 
-Lalu ulangi bagian 3–9 dengan nama database baru. Dengan begitu, aplikasi-aplikasi
-klien Anda bisa berjalan di satu hosting yang sama tanpa saling mengganggu sesi.
+---
+
+## 7. Setup wajib setelah clone (berlaku untuk semua cara)
+
+### 7.1 Versi PHP & ekstensi
+
+cPanel → **Software → Select PHP Version** / **MultiPHP Manager**:
+
+- PHP **7.4**
+- Ekstensi wajib: `mysqli`, `pdo_mysql`, `gd`, `mbstring`, `curl`, `openssl`, `json`, `iconv`, `zip`, `fileinfo`, `zip`
+  (tanpa `gd`, gambar QR code pada SKBS/SKS/SKMB tidak akan terbentuk)
+
+### 7.2 Buat database & user
+
+cPanel → **Databases → MySQL® Databases**:
+
+1. Buat database: `apotek` → jadi **`USERCPANEL_apotek`** (mis. `apotekna_apotek`).
+2. Buat user + password kuat (min. 12 karakter, campur simbol).
+3. **Add User To Database** → pilih user & database → centang **ALL PRIVILEGES** → Make Changes.
+
+### 7.3 File konfigurasi database
+
+Template sudah disiapkan di repo: `app/config/database.sample.php`.
+
+- **Cara A** (repo langsung di `public_html`): cPanel → File Manager → `public_html/app/config` → copy `database.sample.php` → rename menjadi `database.php` → Edit.
+- **Cara B/C**: buat file `public_html/app/config/database.php` di server (file ini tidak ada di repo).
+
+Ubah 3 baris:
+
+```php
+'hostname' => 'localhost',
+'username' => 'USERCPANEL_userdb',
+'password' => 'PASSWORD_DB_YANG_KUAT',
+'database' => 'USERCPANEL_apotek',
+```
+
+> Host di cPanel hampir selalu `localhost` (bukan IP).
+> Karena `database.php` tidak ada di repo, file ini **aman** dari `git pull`/deploy berikutnya.
+
+### 7.4 Tandai environment produksi
+
+Buat file `environment.php` **sejajar dengan `index.php`** di `public_html`:
+
+```php
+<?php
+define('APP_ENV', 'production');                      // matikan tampilan error
+define('APP_BASE_URL', 'https://apotek-naraya.com/');  // opsional, paksa base URL
+```
+
+Efeknya: tampilan error dimatikan, `db_debug` mati, cookie sesi otomatis **hanya lewat HTTPS** (`cookie_secure = TRUE`).
+File ini juga **tidak ada di repo**, jadi tidak tertimpa saat update.
+Berisi nilai selain `development`/`testing`/`production` akan memunculkan error *"The application environment is not set correctly"*.
+
+### 7.5 Import database
+
+1. File Manager: upload `db_narayaapotek_20260917.sql` ke **`/home/USERCPANEL/`** (JANGAN ke `public_html`).
+2. cPanel → **Databases → phpMyAdmin** → pilih database `USERCPANEL_apotek` → tab **Import** → pilih file → **Go**.
+   (Kalau gagal karena ukuran: minta DomaiNesia import via support, atau pecah dump.)
+3. **Hapus** file `.sql` dari server setelah import selesai.
+4. Verifikasi cepat: tabel `conf_users`, `conf_menu`, `trans_obat`, `patient`, `skbs`, `sks`, `skmb` ada dan berisi baris.
+
+### 7.6 Folder yang harus bisa ditulis
+
+Pastikan ada dan permissionnya **755** (owner = akun cPanel Anda):
+
+```
+public_html/app/sessions      ← wajib (folder sesi, sudah ikut repo sebagai folder)
+public_html/app/logs          ← buat manual (kosong di repo)
+public_html/app/cache         ← biasanya sudah ada
+public_html/img/avatar
+public_html/img/temp-qrcode   ← wajib ada, tempat QR code ditulis
+```
+
+Bila perlu: cPanel → File Manager → pilih folder → **Change Permissions** → 755 (dicoba dulu), naikkan ke 775 hanya bila masih error.
+
+### 7.7 SSL & paksa HTTPS
+
+1. cPanel → **Security → SSL/TLS Status** → pastikan `apotek-naraya.com` berstatus **Active (AutoSSL/Let's Encrypt)**; kalau belum → **Run AutoSSL**.
+2. Aktifkan **Force HTTPS Redirect** (cPanel → Domains → `apotek-naraya.com` → toggle *Force HTTPS Redirect*).
+
+   > Pakai toggle cPanel, **jangan** menambah baris redirect di `.htaccess`, karena `.htaccess` ikut ter-overwrite tiap deploy.
+3. Uji `http://apotek-naraya.com` harus otomatis pindah ke `https://`.
+4. Cek juga **`.git` tidak bisa diakses**: buka `https://apotek-naraya.com/.git/config` → harus muncul **404/403**
+   (sudah ditangani `.htaccess` di repo: `RedirectMatch 404 /\.git`).
+
+### 7.8 Login pertama
+
+| Username | Level | Nama | Password awal |
+|---|---|---|---|
+| `admin` | 1 — Superadmin | Superadmin | `adminutama` |
+| `adminapotek` | 2 — Admin | Admin Apotek | `adminutama` |
+| `ahmad` | 3 — Dokter | dr. Ahmad Nabani, S.Ked | `adminutama` |
+
+Login di `https://apotek-naraya.com`, lalu **segera ganti ketiga password** (menu Pengguna).
+
+---
+
+## 8. Alur update aplikasi (rutin)
+
+```
+1. Komputer  : edit kode → git add -A → git commit -m "..." → git push origin main
+2. cPanel    : Files → Git™ Version Control → pilih repo
+3.           : klik "Update from Remote"
+4a. Cara A   : klik "Pull or Deploy" (atau git pull via tombol Update)
+4b. Cara B   : klik "Deploy HEAD Commit"  ← menjalankan .cpanel.yml
+5. Uji       : buka https://apotek-naraya.com
+```
+
+Hal yang **tidak** boleh diedit langsung di server karena tertimpa deploy:
+`index.php`, `.htaccess`, `app/config/config.php`, dan semua file di `app/`, `src/`, `lib/`, `sys/`, `img/`.
+Setting khusus server harus lewat file yang tidak ada di repo: `database.php`, `environment.php`, `.cpanel.yml`.
+
+---
+
+## 9. Troubleshooting
+
+| Gejala | Penyebab & solusi |
+|---|---|
+| `Update from Remote` gagal / minta login | Deploy key belum ditambahkan atau token salah/expired. Ulangi Bagian 3. |
+| `git pull` gagal: *Your local changes would be overwritten* | Ada file repo yang diedit di server. Jalankan `git checkout -- <nama file>` (buang edit server) atau pindahkan setting ke `environment.php`/`database.php`. |
+| Blank/putih setelah login | Cek `public_html/app/logs/log-*.php`. Sementara ubah `environment.php` jadi `define('APP_ENV','development')` untuk melihat pesan error, lalu balikkan ke `production`. |
+| Semua URL kecuali beranda → 404 | Rewrite tidak jalan: pastikan `.htaccess` ada di `public_html`. Jika hosting mematikan `AllowOverride`, set `$config['index_page'] = 'index.php';` di `app/config/config.php` (URL jadi `index.php/...`). |
+| Login sukses tapi langsung logout / "session error" | Folder `app/sessions` tidak writable, atau `cookie_secure=TRUE` padahal diakses lewat `http://`. Perbaiki permission atau sementara set `cookie_secure` `FALSE`. |
+| QR code pada SKBS/SKS/SKMB tidak muncul | Ekstensi `gd` mati, atau `img/temp-qrcode` tidak writable. |
+| `Unable to connect to your database server` | `database.php` salah: cek nama user/database berprefix `USERCPANEL_`, password, host `localhost`. |
+| Import phpMyAdmin gagal (file terlalu besar) | Upload ke folder luar `public_html`, atau minta support DomaiNesia, atau pecah file. |
+| cPanel menolak `public_html` sebagai Repository Path | Gunakan Cara B (clone ke `repositories/apoteknaraya`). |
+| Error 500 tepat setelah deploy | Biasanya `database.php` belum dibuat (Bagian 7.3). |
+| `.htaccess` berisi baris lama `RewriteCond %{HTTP_REFERER} localhost` | Sudah dibersihkan di versi repo terbaru; pastikan deploy memakai commit terakhir. |
+
+---
+
+## 10. Checklist Go-Live
+
+- [ ] Repo GitHub **private** dan riwayat commit **tidak lagi** memuat `*.sql` / `database.php` / `generate_password.php` / `sys_backup/`
+- [ ] `git status` di komputer bersih dan sudah `git push`
+- [ ] Clone di server sukses; aplikasi terbuka di `https://apotek-naraya.com`
+- [ ] `app/config/database.php` dibuat di server (bukan dari repo)
+- [ ] `environment.php` = `production` (+ `APP_BASE_URL`)
+- [ ] Database terimport, jumlah data sesuai (cek menu pasien/kunjungan)
+- [ ] AutoSSL aktif + **Force HTTPS Redirect** menyala
+- [ ] `https://apotek-naraya.com/.git/config` → 404/403
+- [ ] File dump `.sql` sudah dihapus dari server
+- [ ] Password `admin`, `adminapotek`, `ahmad` sudah diganti
+- [ ] Folder `app/sessions`, `app/logs`, `app/cache`, `img/temp-qrcode`, `img/avatar` writable (755)
+- [ ] Backup otomatis diaktifkan (cPanel → Backup Wizard / Backup DomaiNesia)
+- [ ] Uji cetak dokumen: SKS, SKBS, SKMB (nama & NIP dokter tampil benar), QR code terlihat
+- [ ] Uji input: ANAMNESA (6 kolom aksi + modal), dokter pemeriksaan (diagnosa/obat/SKS/SKBS/SKMB manual obat)
+
+---
+
+## 11. Lampiran — Struktur repo & folder penting
+
+```
+public_html/
+├── index.php               ← entry point (mendukung environment.php)
+├── .htaccess               ← rewrite CI + blokir .git, *.sql, *.md, *.zip
+├── app/
+│   ├── config/
+│   │   ├── config.php             (dilacak repo; base_url otomatis, cookie unik)
+│   │   ├── database.sample.php    (dilacak repo; template)
+│   │   └── database.php           (TIDAK di repo → dibuat di server)
+│   ├── controllers/ models/ views/ libraries/
+│   ├── sessions/           ← harus writable
+│   ├── cache/              ← harus writable
+│   └── logs/               ← harus ada & writable (buat manual)
+├── environment.php         (TIDAK di repo → dibuat di server)
+├── img/
+│   ├── avatar/             ← writable
+│   └── temp-qrcode/        ← writable (tempat QR code dibuat)
+├── lib/  src/  sys/
+└── .git/                   ← (Cara A) dijaga .htaccess agar tidak bisa diakses
+```
+
+**Catatan penting soal `sys/` dan `sys_backup/`:** folder `sys/` dipakai aplikasi (framework) dan wajib ikut deploy.
+Folder `sys_backup/` hanya salinan lama framework → sudah dikeluarkan dari repo agar tidak memperberat clone.
+Salinan lokalnya tetap ada di komputer Anda; data aplikasi tidak terpengaruh.

@@ -1,16 +1,38 @@
 DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
 RewriteEngine on
 RewriteCond $1 !^(index\.php|assets|img|css|js|ext|lib|src|uploads|robots\.txt|favicon\.ico)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ ./index.php/$1 [L,QSA]
-
-RewriteCond %{HTTP_REFERER} !^$
-RewriteCond %{HTTP_REFERER} !^http://(www\.)?localhost/.*$ [NC]
+</IfModule>
 
 Options All -Indexes
 
+# ==== PENGAMANAN ====
+# Blokir folder .git (riwayat kode) dan berkas konfigurasi deploy
+<IfModule mod_alias.c>
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.gitignore
+RedirectMatch 404 /\.cpanel\.yml
+</IfModule>
+
+# Blokir berkas yang tidak boleh diakses dari browser (dump SQL, dokumentasi, arsip, log)
+<FilesMatch "\.(sql|md|zip|gz|log|bak|yml|ini|sh|env)$">
+    <IfModule authz_core_module>
+        Require all denied
+    </IfModule>
+    <IfModule !authz_core_module>
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
 <Files .htaccess>
-Order Deny,Allow
-Deny from all
+    <IfModule authz_core_module>
+        Require all denied
+    </IfModule>
+    <IfModule !authz_core_module>
+        Deny from all
+    </IfModule>
 </Files>

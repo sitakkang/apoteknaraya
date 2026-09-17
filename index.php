@@ -54,8 +54,22 @@ date_default_timezone_set('Asia/Makassar');
  *     production
  *
  * NOTE: If you change these, also change the error_reporting() code below
+ *
+ * DEPLOY (git clone): di server cukup buat file `environment.php` di folder
+ * yang sama dengan index.php, isinya:
+ *
+ *     <?php define('APP_ENV', 'production');
+ *
+ * File environment.php TIDAK ikut git (.gitignore), jadi setting server tidak
+ * akan tertimpa saat `git pull`/deploy berikutnya.
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	$__env_file = __DIR__.'/environment.php';
+	if (file_exists($__env_file))
+	{
+		require $__env_file;
+	}
+
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : (defined('APP_ENV') ? APP_ENV : 'development'));
 
 /*
  *---------------------------------------------------------------
