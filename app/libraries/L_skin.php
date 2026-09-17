@@ -12,17 +12,17 @@ class L_skin {
 	function apps_config($key)
     {
 		$data = array(
-			'title' 		=> 'Apotek Naraya',
+			'title' 		=> 'Naraya Farma',
 			'logo' 			=> 'img/apotek-sidebar-logo.jpeg',
 			'login' 		=> 'img/dashboard.jpeg',
 			'favicon' 		=> 'img/apotek_logo_text.png',
 			'noimage' 		=> 'img/noimage.png',
 			'loading' 		=> 'img/loading.gif',
 			'email' 		=> 'info@imip.co.id',
-			'footer' 		=> 'Apotek Naraya',
-			'meta_desc' 	=> 'Aplikasi Apotek Naraya',
+			'footer' 		=> 'Naraya Farma',
+			'meta_desc' 	=> 'Naraya Farma',
 			'meta_key' 		=> 'PT Indonesia Morowali Industrial Park',
-			'head_title' 	=> 'Apotek Naraya',
+			'head_title' 	=> 'Naraya Farma',
 			'head_subtitle' => 'A Human Resources Information System (HRIS) is a software or online solution that is used for data entry, data tracking and the data information requirements of an organizations human resources (HR) management, payroll and bookkeeping operations'
 		);
     	return $data[$key];
