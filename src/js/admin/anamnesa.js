@@ -306,7 +306,7 @@ $(document).ready(function () {
         var doctorId = $(this).data('id');
         var visitId  = $('#MyModalContent').find('#visit_id_sks').val();
         if (!doctorId || !visitId) return;
-        $.post(site_url + 'dokter/act_update_doctor', { visit_id: visitId, doctor_id: doctorId }, function (res) {
+        $.post(site_url + 'anamnesa/act_update_doctor', { visit_id: visitId, doctor_id: doctorId }, function (res) {
             if (res.status == 1) {
                 notifNo(res.notif);
             } else {

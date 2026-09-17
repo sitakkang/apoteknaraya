@@ -342,8 +342,13 @@ cPanel → **Software → Select PHP Version** / **MultiPHP Manager**:
 cPanel → **Databases → MySQL® Databases**:
 
 1. Buat database: `apotek` → jadi **`USERCPANEL_apotek`** (mis. `apotekna_apotek`).
+   Catat **nama persisnya** dari daftar "Current Databases" (di DomaiNesia sering sudah otomatis berisi `db_narayaapotek`,
+   mis. `apotekn1_db_narayaapotek`) — nama ini yang dipakai di `app/config/database.php`.
 2. Buat user + password kuat (min. 12 karakter, campur simbol).
 3. **Add User To Database** → pilih user & database → centang **ALL PRIVILEGES** → Make Changes.
+
+> Langkah 3 wajib. Kalau dilewatkan, aplikasi gagal dengan
+> `(HY000/1044): Access denied for user '...'@'localhost' to database '...'` — walau password sudah benar.
 
 ### 7.3 File konfigurasi database
 
@@ -493,6 +498,8 @@ Setting khusus server harus lewat file yang tidak ada di repo: `database.php`, `
 | Login sukses tapi langsung logout / "session error" | Folder `app/sessions` tidak writable, atau `cookie_secure=TRUE` padahal diakses lewat `http://`. Perbaiki permission atau sementara set `cookie_secure` `FALSE`. |
 | QR code pada SKBS/SKS/SKMB tidak muncul | Ekstensi `gd` mati, atau `img/temp-qrcode` tidak writable. |
 | `Unable to connect to your database server` | `database.php` salah: cek nama user/database berprefix `USERCPANEL_`, password, host `localhost`. |
+| `(HY000/1044): Access denied for user '...'@'localhost' to database '...'` | Password sudah benar, tapi user **belum dihubungkan ke database**. cPanel → MySQL® Databases → **Add User To Database** → pilih user + database → centang **ALL PRIVILEGES** → Make Changes. Cek juga nama database persis sama dengan yang ada di daftar cPanel. |
+| `(HY000/1045): Access denied for user '...'@'localhost'` | Username atau **password** di `app/config/database.php` salah (bukan masalah privilege). |
 | Import phpMyAdmin gagal (file terlalu besar) | Upload ke folder luar `public_html`, atau minta support DomaiNesia, atau pecah file. |
 | cPanel menolak `public_html` sebagai Repository Path | Gunakan Cara B (clone ke `repositories/apoteknaraya`). |
 | Error 500 tepat setelah deploy | Biasanya `database.php` belum dibuat (Bagian 7.3). |

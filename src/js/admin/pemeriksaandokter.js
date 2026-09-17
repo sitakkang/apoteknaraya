@@ -1,6 +1,19 @@
 // ================================================================
 // PEMERIKSAAN PAGE — Helper reload sections
 // ================================================================
+
+// Endpoint modal bisa dua sumber:
+//  - menu Dokter   → 'dokter/'    (default)
+//  - menu Anamnesa → 'anamnesa/'  (di-set oleh src/js/admin/exam_endpoint.js)
+// Dipakai lazy (saat diklik) supaya urutan pemuatan file JS tidak masalah.
+function examEndpoint() {
+    return window.examEndpointBase ? window.examEndpointBase : 'dokter/';
+}
+
+function examUrl(path) {
+    return site_url + examEndpoint() + path;
+}
+
 function getVisitIdPemeriksaan() {
     return $('#visit_id_sks').val();
 }
@@ -8,7 +21,7 @@ function getVisitIdPemeriksaan() {
 function reloadDiagnosaTable() {
     var vid = getVisitIdPemeriksaan();
     if (!vid) return;
-    $('#diagnosa-table-wrap').load(site_url + 'dokter/reload_diagnosa?visit_id=' + vid);
+    $('#diagnosa-table-wrap').load(examUrl('reload_diagnosa?visit_id=' + vid));
 }
 
 function reloadObatTable() {
@@ -19,7 +32,7 @@ function reloadObatTable() {
         if (typeof examModalRefresh === 'function') examModalRefresh('obat', vid);
         return;
     }
-    $('#obat-table-wrap').load(site_url + 'dokter/reload_obat?visit_id=' + vid, function () {
+    $('#obat-table-wrap').load(examUrl('reload_obat?visit_id=' + vid), function () {
         reloadPulvList();
     });
 }
@@ -31,7 +44,7 @@ function reloadPulvList() {
         if (typeof examModalRefresh === 'function') examModalRefresh('obat', vid);
         return;
     }
-    $.get(site_url + 'dokter/reload_pulv?visit_id=' + vid, function (html) {
+    $.get(examUrl('reload_pulv?visit_id=' + vid), function (html) {
         $('#pulv-list-wrap').html(html);
     });
 }
@@ -39,7 +52,7 @@ function reloadPulvList() {
 function reloadSksSection() {
     var vid = getVisitIdPemeriksaan();
     if (!vid) return;
-    $.get(site_url + 'dokter/reload_sks?visit_id=' + vid, function (html) {
+    $.get(examUrl('reload_sks?visit_id=' + vid), function (html) {
         $('#sks-section-wrap').html(html);
         $('#sks-section-wrap .datepicker').datetimepicker({
             datepicker: true, timepicker: false, format: 'd/m/Y',
@@ -54,7 +67,7 @@ function reloadSksSection() {
 function reloadSkbsSection() {
     var vid = $('#skbs-section-wrap').data('visit-id') || $('#visit_id_skbs').val();
     if (!vid) return;
-    $.get(site_url + 'dokter/reload_skbs?visit_id=' + vid, function (html) {
+    $.get(examUrl('reload_skbs?visit_id=' + vid), function (html) {
         $('#skbs-section-wrap').html(html);
     }).fail(function () {
         notifNo('Gagal memuat ulang data SKBS');
@@ -64,7 +77,7 @@ function reloadSkbsSection() {
 function reloadSkmbSection() {
     var vid = $('#skmb-section-wrap').data('visit-id') || $('#visit_id_skmb').val();
     if (!vid) return;
-    $.get(site_url + 'dokter/reload_skmb?visit_id=' + vid, function (html) {
+    $.get(examUrl('reload_skmb?visit_id=' + vid), function (html) {
         $('#skmb-section-wrap').html(html);
         $('#skmb-section-wrap .datepicker').datetimepicker({
             datepicker: true, timepicker: false, format: 'd/m/Y',
@@ -89,7 +102,7 @@ $(document).ready(function () {
         if (!dgn_id) { notifNo('Silakan pilih diagnosa'); return false; }
 
         var dgn_note = $('#dgn_note').val();
-        $.post(site_url + 'dokter/act_add_diagnosa', {
+        $.post(examUrl('act_add_diagnosa'), {
             medical_record_id: mrd_id,
             dgn_id: dgn_id,
             dgn_note: dgn_note
@@ -116,7 +129,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_del_diagnosa', { id: id }, function (res) {
+            $.post(examUrl('act_del_diagnosa'), { id: id }, function (res) {
                 if (res.status == 2) {
                     notifYesAuto(res.notif);
                     reloadDiagnosaTable();
@@ -139,7 +152,7 @@ $(document).ready(function () {
         if (!obat_name) { notifNo('Silakan ketik nama obat'); return false; }
         if (qty < 1) { notifNo('Qty minimal 1'); return false; }
 
-        $.post(site_url + 'dokter/act_add_obat', {
+        $.post(examUrl('act_add_obat'), {
             medical_record_id: mrd_id,
             obat_name: obat_name,
             qty: qty,
@@ -174,7 +187,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_del_obat', { id: id }, function (res) {
+            $.post(examUrl('act_del_obat'), { id: id }, function (res) {
                 if (res.status == 2) {
                     notifYesAuto(res.notif);
                     reloadObatTable();
@@ -204,7 +217,7 @@ $(document).ready(function () {
         if (!payload.diagnosa) { notifNo('Silakan isi diagnosa'); return false; }
         if (!payload.datefrom || !payload.dateto) { notifNo('Silakan isi tanggal berlaku'); return false; }
 
-        $.post(site_url + 'dokter/act_buat_sks', payload, function (res) {
+        $.post(examUrl('act_buat_sks'), payload, function (res) {
             if (res.status == 1) {
                 notifNo(res.notif);
             } else {
@@ -226,7 +239,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_del_sks', { id: id }, function (res) {
+            $.post(examUrl('act_del_sks'), { id: id }, function (res) {
                 if (res.status == 1) notifNo(res.notif);
                 else { notifYesAuto(res.notif); reloadSksSection(); }
             }, 'json');
@@ -252,7 +265,7 @@ $(document).ready(function () {
         };
         if (!payload.skbs_result) { notifNo('Silakan pilih hasil'); return false; }
 
-        $.post(site_url + 'dokter/act_simpan_skbs', payload, function (res) {
+        $.post(examUrl('act_simpan_skbs'), payload, function (res) {
             if (res.status == 1) notifNo(res.notif);
             else { notifYesAuto(res.notif); reloadSkbsSection(); }
         }, 'json');
@@ -270,7 +283,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_del_skbs', { id: id }, function (res) {
+            $.post(examUrl('act_del_skbs'), { id: id }, function (res) {
                 if (res.status == 1) notifNo(res.notif);
                 else { notifYesAuto(res.notif); reloadSkbsSection(); }
             }, 'json');
@@ -291,7 +304,7 @@ $(document).ready(function () {
 
         if (!doctorId || !visitId) return;
 
-        $.post(site_url + 'dokter/act_update_doctor', {
+        $.post(examUrl('act_update_doctor'), {
             visit_id: visitId,
             doctor_id: doctorId
         }, function (res) {
@@ -332,7 +345,7 @@ $(document).ready(function () {
         if (!payload.hubungan) { notifNo('Silakan pilih hubungan'); return false; }
         if (!payload.pengantar) { notifNo('Silakan isi nama pengantar'); return false; }
 
-        $.post(site_url + 'dokter/act_simpan_skmb', payload, function (res) {
+        $.post(examUrl('act_simpan_skmb'), payload, function (res) {
             if (res.status == 1) {
                 notifNo(res.notif);
             } else {
@@ -354,7 +367,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_del_skmb', { id: id }, function (res) {
+            $.post(examUrl('act_del_skmb'), { id: id }, function (res) {
                 if (res.status == 1) notifNo(res.notif);
                 else { notifYesAuto(res.notif); reloadSkmbSection(); }
             }, 'json');
@@ -376,8 +389,12 @@ $(document).ready(function () {
             return false;
         }
 
-        var mrd_id = $('#mrd_id_diagnosa').val();
-        $.get(site_url + 'dokter/get_pulv_popup', { mrd_id: mrd_id }, function (html) {
+        // Hidden input bisa #mrd_id_obat (section Obat) atau #mrd_id_diagnosa
+        // (halaman pemeriksaan penuh). Di modal Anamnesa hanya #mrd_id_obat yang ada.
+        var mrd_id = $('#mrd_id_obat').val() || $('#mrd_id_diagnosa').val();
+        if (!mrd_id) { notifNo('Data pemeriksaan tidak ditemukan'); return false; }
+
+        $.get(examUrl('get_pulv_popup'), { mrd_id: mrd_id }, function (html) {
             $('#MyModalTitle').html('<i class="fa fa-mortar-pestle"></i> Buat Racikan');
             $('#MyModalContent').html(html);
             $('#MyModalFooter').html(
@@ -428,7 +445,7 @@ $(document).ready(function () {
             payload.pulv_notes = $('#pulv_notes').val();
         }
 
-        $.post(site_url + 'dokter/act_save_pulv', payload, function (res) {
+        $.post(examUrl('act_save_pulv'), payload, function (res) {
             if (res.status == 1) {
                 notifNo(res.notif);
             } else {
@@ -442,7 +459,7 @@ $(document).ready(function () {
     // Edit racikan
     $(document).on('click', '.btn-edit-pulv', function () {
         var id = $(this).data('id');
-        $.get(site_url + 'dokter/edit_pulv_popup', { id: id }, function (html) {
+        $.get(examUrl('edit_pulv_popup'), { id: id }, function (html) {
             $('#MyModalTitle').html('<i class="fa fa-pen"></i> Edit Racikan');
             $('#MyModalContent').html(html);
             $('#MyModalFooter').html(
@@ -463,7 +480,7 @@ $(document).ready(function () {
         if (!pulv_dosis) { notifNo('Silahkan isi dosis racikan'); return false; }
         if (!pulv_qty || pulv_qty < 1) { notifNo('Silahkan isi jumlah racikan'); return false; }
 
-        $.post(site_url + 'dokter/act_update_pulv', {
+        $.post(examUrl('act_update_pulv'), {
             id: id,
             pulv_name: pulv_name,
             pulv_dosis: pulv_dosis,
@@ -493,7 +510,7 @@ $(document).ready(function () {
             confirmButtonColor: '#d33',
         }).then(function (result) {
             if (!result.value) return;
-            $.post(site_url + 'dokter/act_delete_pulv', { id: id }, function (res) {
+            $.post(examUrl('act_delete_pulv'), { id: id }, function (res) {
                 if (res.status == 1) notifNo(res.notif);
                 else { notifYesAuto(res.notif); reloadObatTable(); }
             }, 'json');
