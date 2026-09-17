@@ -207,20 +207,94 @@ Sekaligus membuat `database.php` / `environment.php` **tidak pernah tertimpa** s
 
 ---
 
-## 6. CARA C — Clone via SSH (hanya bila akun punya akses SSH)
+## 6. CARA C — Clone via SSH/Terminal langsung ke `public_html` (yang paling cepat)
+
+Semua perintah dijalankan di server lewat **cPanel » Advanced » Terminal** atau SSH.
+Contoh di panduan ini memakai username `apotekn1` dan server `sierra` — sesuaikan dengan milik Anda.
+
+### 6.1 Prasyarat: kirim kode terbaru ke GitHub
+
+Repo GitHub harus sudah memuat commit terbaru dari komputer (`git push origin main`), kalau tidak
+server akan men-clone versi lama yang masih berisi file `.sql` sensitif.
+
+### 6.2 Siapkan deploy key (repo private)
+
+```bash
+# 1) buat kunci khusus repo ini (tanpa passphrase agar bisa dipakai git otomatis)
+ssh-keygen -t ed25519 -C "apotekn1@apotek-naraya.com" -f ~/.ssh/apoteknaraya -N ""
+
+# 2) tampilkan public key → copy semuanya (mulai dari ssh-ed25519 sampai akhir)
+cat ~/.ssh/apoteknaraya.pub
+
+# 3) daftarkan ke GitHub: repo → Settings → Deploy keys → Add deploy key
+#    paste kunci di atas, JANGAN centang "Allow write access"
+
+# 4) buat alias SSH supaya git selalu memakai kunci ini
+touch ~/.ssh/config && chmod 600 ~/.ssh/config
+cat >> ~/.ssh/config <<'EOF'
+
+Host github-apoteknaraya
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/apoteknaraya
+    IdentitiesOnly yes
+EOF
+
+# 5) tes (dijawab "yes" saat ditanya fingerprint)
+ssh -T github-apoteknaraya
+#    jawaban benar: "Hi sitakkang/apoteknaraya! You've successfully authenticated..."
+```
+
+> Alternatif tanpa deploy key — pakai token pada URL HTTPS:
+> `git clone https://USERNAME_GITHUB:TOKEN@github.com/sitakkang/apoteknaraya.git .`
+> (token akan tersimpan di `.git/config` server; revoke bila tidak dipakai lagi).
+
+### 6.3 Kosongkan `public_html`
+
+Direktori tujuan **harus kosong** supaya bisa clone langsung ke situ.
 
 ```bash
 cd ~
-git clone git@github.com:sitakkang/apoteknaraya.git apotek-repo
-cd ~/apotek-repo
-
-# update rutin
-git pull origin main
-
-# salin ke web root (tanpa .git)
-rsync -a --exclude '.git' --exclude 'database.php' --exclude 'environment.php' \
-      ~/apotek-repo/ ~/public_html/
+mkdir -p ~/backup_public_html_default
+mv ~/public_html/{400.shtml,401.shtml,403.shtml,404.shtml,413.shtml,500.shtml,cp_errordocument.shtml,default.html,default-welcome.html,php.ini} ~/backup_public_html_default/ 2>/dev/null
+ls -la ~/public_html          # harus kosong (hanya . dan ..)
 ```
+
+> `php.ini` di `public_html` dibuat oleh MultiPHP INI Editor; setelah clone selesai boleh
+> dikembalikan: `mv ~/backup_public_html_default/php.ini ~/public_html/`.
+> Kalau ada folder `cgi-bin` atau `.well-known`, pindahkan juga dulu.
+
+### 6.4 Clone ke `public_html`
+
+```bash
+cd ~/public_html
+git clone git@github-apoteknaraya:sitakkang/apoteknaraya.git .
+
+# verifikasi
+ls -la
+git log --oneline -3
+```
+
+Struktur hasil clone: `index.php`, `.htaccess`, `app/`, `img/`, `lib/`, `src/`, `sys/`, `.git/`.
+
+### 6.5 Update rutin (tanpa cPanel GUI)
+
+```bash
+cd ~/public_html
+git pull origin main
+```
+
+Karena `app/config/database.php`, `environment.php`, dan `.cpanel.yml` tidak ada di repo,
+`git pull` tidak akan pernah menimpa konfigurasi server.
+
+> Kalau `git pull` menolak karena ada file repo yang diedit di server:
+> `git stash` → `git pull` → `git stash pop`, atau buang edit server dengan `git checkout -- <file>`.
+
+### 6.6 (Opsional) daftarkan ke cPanel Git™ Version Control
+
+Kalau nanti ingin tombol **Pull or Deploy** di cPanel: cPanel → Git™ Version Control → **Create** →
+*Clone a Repository* dimatikan → **Repository Path** `public_html` → nama bebas → **Create**
+(cPanel akan mengenali repo yang sudah ada, tidak men-clone ulang).
 
 ---
 
@@ -316,6 +390,44 @@ Bila perlu: cPanel → File Manager → pilih folder → **Change Permissions** 
 | `ahmad` | 3 — Dokter | dr. Ahmad Nabani, S.Ked | `adminutama` |
 
 Login di `https://apotek-naraya.com`, lalu **segera ganti ketiga password** (menu Pengguna).
+
+### 7.9 Ringkasan langkah 7.2–7.6 versi terminal (khusus Cara C)
+
+Dijalankan di server setelah clone (ganti `apotekn1_apotek` / `apotekn1_userdb` sesuai cPanel Anda):
+
+```bash
+cd ~/public_html
+
+# 1) konfigurasi database
+cp app/config/database.sample.php app/config/database.php
+nano app/config/database.php      # isi username, password, database (host tetap 'localhost')
+
+# 2) tandai production
+cat > environment.php <<'EOF'
+<?php
+define('APP_ENV', 'production');
+define('APP_BASE_URL', 'https://apotek-naraya.com/');
+EOF
+
+# 3) folder yang harus ada & writable
+mkdir -p app/logs app/sessions app/cache img/temp-qrcode img/avatar
+chmod 755 app/logs app/sessions app/cache img/temp-qrcode img/avatar
+
+# 4) import database (file .sql diupload dulu ke luar public_html, mis. ~/)
+mysql -u apotekn1_userdb -p apotekn1_apotek < ~/db_narayaapotek_20260917.sql
+rm -f ~/db_narayaapotek_20260917.sql      # hapus dump dari server setelah import
+
+# 5) cek cepat
+php -v                                    # pastikan PHP 7.4
+php -m | grep -E 'mysqli|gd|mbstring'      # ekstensi wajib
+curl -I https://apotek-naraya.com          # harus HTTP/2 200 (atau 302 ke /auth)
+```
+
+Upload dump dari komputer (PowerShell) — pakai host SSH dari cPanel DomaiNesia:
+
+```powershell
+scp C:\xampp\mysql\backup\db_narayaapotek_20260917.sql apotekn1@sierra.domenesia.com:~/
+```
 
 ---
 
