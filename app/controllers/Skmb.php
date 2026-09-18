@@ -129,6 +129,12 @@ class Skmb extends CI_Controller {
         $doct_by_id = intval($this->input->post('doctby'));
         $doct = $this->db->get_where('conf_users', array('id_user' => $doct_by_id))->row();
 
+        // Nomor dokumen diisi user (default dari form: 00000/SKMB/IX/2026)
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKMB');
+        }
+
         $data = array(
             'patient_name'    => strtoupper(trim($this->input->post('patient_name'))),
             'nik'             => trim($this->input->post('nik')),
@@ -140,7 +146,7 @@ class Skmb extends CI_Controller {
             'docdate'         => $this->format_date_db($this->input->post('docdate')),
             'doct_by_id'      => $doct_by_id,
             'doct_by_name'    => $doct ? $doct->fullname : '',
-            'docnumb'         => $this->M_skmb->generate_docnumb(),
+            'docnumb'         => $docnumb,
             'insertby'        => $this->session->userdata('sess_id'),
             'insertdt'        => date('Y-m-d H:i:s'),
         );
@@ -161,6 +167,12 @@ class Skmb extends CI_Controller {
         $doct_by_id = intval($this->input->post('doctby'));
         $doct = $this->db->get_where('conf_users', array('id_user' => $doct_by_id))->row();
 
+        // Nomor dokumen dapat diubah user pada form update
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKMB');
+        }
+
         $data = array(
             'patient_name'    => strtoupper(trim($this->input->post('patient_name'))),
             'nik'             => trim($this->input->post('nik')),
@@ -172,6 +184,7 @@ class Skmb extends CI_Controller {
             'docdate'         => $this->format_date_db($this->input->post('docdate')),
             'doct_by_id'      => $doct_by_id,
             'doct_by_name'    => $doct ? $doct->fullname : '',
+            'docnumb'         => $docnumb,
             'updateby'        => $this->session->userdata('sess_id'),
             'updatedt'        => date('Y-m-d H:i:s'),
         );

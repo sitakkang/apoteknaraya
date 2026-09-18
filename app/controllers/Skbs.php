@@ -106,10 +106,13 @@ class Skbs extends CI_Controller {
         $doct = $this->db->get_where('conf_users', array('id_user' => intval($row->skbs_doct_id)))->row();
         $row->nip = $doct ? $doct->nip : '';
 
-        // Generate nomor dokumen
+        // Nomor dokumen: pakai nomor tersimpan bila ada (dapat diedit user),
+        // kalau kosong (data lama) pakai format 00000/IMIP-SKBS/bulan/tahun
         $month_roman = $this->month_roman(date('n'));
         $year = date('Y');
-        $data['docnumb'] = sprintf('%05d', $row->id_skbs) . '/IMIP-SKBS/' . $month_roman . '/' . $year;
+        $data['docnumb'] = !empty($row->docnumb)
+            ? $row->docnumb
+            : sprintf('%05d', $row->id_skbs) . '/SKBS/' . $month_roman . '/' . $year;
         $data['row'] = $row;
         $data['qrcode'] = $this->generate_qrcode($id);
 

@@ -490,6 +490,12 @@ class Dokter extends CI_Controller {
         $age    = !empty($row->patient_bod) ? date_diff(date_create($row->patient_bod), date_create('now'))->y : ($existing->age ?? '');
         $gender = !empty($row->patient_gender) ? $row->patient_gender : ($existing->gender ?? '');
 
+        // Nomor dokumen diisi user pada form (default: 00000/SKS/IX/2026)
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKS');
+        }
+
         $data = array(
             'visit_id'     => $visit_id,
             'patient_name' => strtoupper(trim($row->patient_name)),
@@ -504,6 +510,7 @@ class Dokter extends CI_Controller {
             'docdate'      => $this->format_date_db($this->input->post('docdate')),
             'doctby'       => $doct_by,
             'alamat'         => strtoupper(trim($row->patient_address)),
+            'docnumb'      => $docnumb,
             
         );
 
@@ -512,14 +519,13 @@ class Dokter extends CI_Controller {
             $data['updateby'] = $insertby;
             $data['updatedt'] = $now;
             $this->M_dokter->update_sks($existing->id, $data);
-            $msg = 'SKS berhasil diperbarui! (No. ' . htmlspecialchars($existing->docnumb) . ')';
+            $msg = 'SKS berhasil diperbarui! (No. ' . $docnumb . ')';
         } else {
             // INSERT
-            $data['docnumb']  = $this->M_dokter->generate_docnumb_sks();
             $data['insertby'] = $insertby;
             $data['insertdt'] = $now;
             $this->M_dokter->insert_sks($data);
-            $msg = 'SKS berhasil dibuat! (No. ' . $data['docnumb'] . ')';
+            $msg = 'SKS berhasil dibuat! (No. ' . $docnumb . ')';
         }
 
         echo json_encode(array(
@@ -696,6 +702,15 @@ class Dokter extends CI_Controller {
             'skbs_status'          => 1,
         );
 
+        // Nomor dokumen diisi user pada form (default: 00000/IMIP-SKBS/IX/2026)
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKBS');
+        }
+        if ($this->db->field_exists('docnumb', 'trans_skbs')) {
+            $data['docnumb'] = $docnumb;
+        }
+
         if ($existing) {
             $data['update_dt'] = $now;
             $data['update_by'] = $insert_by;
@@ -722,10 +737,11 @@ class Dokter extends CI_Controller {
         $doct = $this->db->get_where('conf_users', array('id_user' => intval($row->skbs_doct_id)))->row();
         $row->nip = $doct ? $doct->nip : '';
 
-        // Generate nomor dokumen
-        $month_roman = $this->month_roman(date('n'));
-        $year = date('Y');
-        $data['docnumb'] = sprintf('%05d', $row->id_skbs) . '/IMIP-SKBS/' . $month_roman . '/' . $year;
+        // Nomor dokumen: pakai nomor tersimpan bila ada (dapat diedit user),
+        // kalau kosong (data lama) pakai format 00000/IMIP-SKBS/bulan/tahun
+        $data['docnumb'] = !empty($row->docnumb)
+            ? $row->docnumb
+            : sprintf('%05d', $row->id_skbs) . '/SKBS/' . $this->month_roman(date('n')) . '/' . date('Y');
         $data['row'] = $row;
         $data['qrcode'] = $this->generate_qrcode_skbs($id);
 
@@ -815,13 +831,19 @@ class Dokter extends CI_Controller {
             'doct_by_name'      => $doct ? $doct->fullname : '',
         );
 
+        // Nomor dokumen diisi user pada form (default: 00000/SKMB/IX/2026)
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKMB');
+        }
+        $data['docnumb'] = $docnumb;
+
         if ($existing) {
             $data['updateby'] = $insert_by;
             $data['updatedt'] = $now;
             $this->M_dokter->update_skmb($existing->id, $data);
             $msg = 'SKMB berhasil diperbarui!';
         } else {
-            $data['docnumb']  = $this->generate_docnumb_skmb();
             $data['insertby'] = $insert_by;
             $data['insertdt'] = $now;
             $this->M_dokter->insert_skmb($data);
@@ -892,26 +914,11 @@ class Dokter extends CI_Controller {
     }
 
     /**
-     * Generate nomor dokumen SKMB (running number per bulan)
+     * Nomor dokumen SKMB default: 00000/SKMB/IX/2026
+     * Running number selalu 00000 dan diperbarui manual oleh user pada form.
      */
     private function generate_docnumb_skmb() {
-        $month_roman = $this->month_roman(date('n'));
-        $year = date('Y');
-
-        $last = $this->db->query(
-            "SELECT docnumb FROM skmb
-             WHERE docnumb LIKE '%/SKMB/" . $month_roman . "/$year'
-             ORDER BY id DESC LIMIT 1"
-        )->row();
-
-        if ($last) {
-            $parts = explode('/', $last->docnumb);
-            $next  = intval($parts[0]) + 1;
-        } else {
-            $next = 1;
-        }
-
-        return sprintf('%05d', $next) . '/SKMB/' . $month_roman . '/' . $year;
+        return docnumb_default('SKMB');
     }
 
     /**

@@ -28,8 +28,13 @@
         .btn-print { display: inline-block; margin-bottom: 16px; padding: 8px 20px; background: #2d6a4f; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
         .btn-print:hover { background: #1b4332; }
 
+        /* Margin halaman di-nol-kan agar area header/footer browser
+           (tanggal cetak & judul "Cetak SKKB") tidak ikut tercetak.
+           Jarak tepi diambil alih oleh padding body saat @media print. */
+        @page { size: A4 portrait; margin: 0; }
+
         @media print {
-            body { padding: 0; }
+            body { padding: 10mm 12mm; }
             .no-print { display: none; }
         }
     </style>
@@ -118,6 +123,14 @@
 
     <script>
         // window.onload = function() { window.print(); }
+
+        // Judul dokumen dikosongkan saat dicetak supaya teks "Cetak SKKB"
+        // tidak ikut tampil di header cetak browser (di atas kopsurat).
+        (function () {
+            var judul = document.title;
+            window.addEventListener('beforeprint', function () { document.title = ''; });
+            window.addEventListener('afterprint', function () { document.title = judul; });
+        })();
     </script>
 </body>
 </html>

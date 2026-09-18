@@ -10,6 +10,14 @@ if (isset($patient) && !empty($patient->patient_bod)) {
 }
 ?>
 <div class="ds-form-group">
+    <label>No. Dokumen / Kode Surat <span class="text-danger">*</span></label>
+    <input type="text" id="docnumb" name="docnumb" class="form-control"
+           value="<?= htmlspecialchars(docnumb_default('SKS')) ?>"
+           placeholder="00000/SKS/IX/2026" maxlength="100" autocomplete="off">
+    <small class="text-muted">Nomor dokumen otomatis (running number 00000). Ubah manual bila perlu.</small>
+</div>
+
+<div class="ds-form-group">
     <label>Nama Pasien <span class="text-danger">*</span></label>
     <input type="text" id="patient_name" name="patient_name" class="form-control"
            value="<?= htmlspecialchars($pf_name) ?>"

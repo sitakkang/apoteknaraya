@@ -1,4 +1,12 @@
 <div class="ds-form-group">
+    <label>No. Dokumen / Kode Surat <span class="text-danger">*</span></label>
+    <input type="text" id="docnumb" name="docnumb" class="form-control"
+           value="<?= htmlspecialchars(docnumb_default('SKMB')) ?>"
+           placeholder="00000/SKMB/IX/2026" maxlength="100" autocomplete="off">
+    <small class="text-muted">Nomor dokumen otomatis (running number 00000). Ubah manual bila perlu.</small>
+</div>
+
+<div class="ds-form-group">
     <label>Pengantar <span class="text-danger">*</span></label>
     <input type="text" id="pengantar" name="pengantar" class="form-control"
            placeholder="Nama lengkap pengantar" maxlength="200" autocomplete="off">

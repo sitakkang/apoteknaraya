@@ -130,6 +130,7 @@ $(document).ready(function () {
 
     $(document).on('click', '#save_add_btn', function () {
         var payload = {
+            docnumb:         $('#docnumb').val(),
             patient_name:    $('#patient_name').val(),
             nik:             $('#nik').val(),
             pengantar:       $('#pengantar').val(),
@@ -140,6 +141,10 @@ $(document).ready(function () {
             docdate:         $('#docdate').val(),
             doctby:          $('#doctby').val(),
         };
+        if($('#docnumb').val()==''){
+			notifNo("Silahkan isi nomor dokumen");
+            return false;
+		}
         if($('#patient_name').val()==''){
 			notifNo("Silahkan isi nama yang diantar");
             return false;
@@ -205,6 +210,7 @@ $(document).ready(function () {
     $(document).on('click', '#save_edit_btn', function () {
         var payload = {
             id:               $('#edit_id').val(),
+            docnumb:          $('#edit_docnumb').val(),
             patient_name:     $('#edit_patient_name').val(),
             nik:              $('#edit_nik').val(),
             pengantar:        $('#edit_pengantar').val(),
@@ -215,6 +221,10 @@ $(document).ready(function () {
             docdate:          $('#edit_docdate').val(),
             doctby:           $('#edit_doctby').val(),
         };
+        if($('#edit_docnumb').val()==''){
+			notifNo("Silahkan isi nomor dokumen");
+            return false;
+		}
         if($('#edit_patient_name').val()==''){
 			notifNo("Silahkan isi nama yang diantar");
             return false;

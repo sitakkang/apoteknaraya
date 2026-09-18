@@ -176,29 +176,12 @@ class M_sks extends CI_Model {
     }
 
     /**
-     * Generate nomor dokumen otomatis (running number per bulan)
-     * Format: 00001/SKS/VII/2026
+     * Nomor dokumen default: 00000/SKS/IX/2026
+     * Running number selalu 00000 dan diperbarui manual oleh user pada form
+     * (Create & Update). Dipakai sebagai cadangan bila field kosong.
      */
     public function generate_docnumb() {
-        $month = date('n');  // 1–12
-        $year  = date('Y');
-
-        // Cari nomor terakhir di bulan & tahun ini
-        $last = $this->db->query(
-            "SELECT docnumb FROM sks
-             WHERE docnumb LIKE '%/SKS/" . $this->db->escape_like_str($this->month_roman($month)) . "/$year'
-             ORDER BY id DESC LIMIT 1"
-        )->row();
-
-        if ($last) {
-            // Ambil angka dari depan: 00001/SKS/...
-            $parts = explode('/', $last->docnumb);
-            $next  = intval($parts[0]) + 1;
-        } else {
-            $next = 1;
-        }
-
-        return sprintf('%05d', $next) . '/SKS/' . $this->month_roman($month) . '/' . $year;
+        return docnumb_default('SKS');
     }
 
     /**

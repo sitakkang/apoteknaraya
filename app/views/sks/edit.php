@@ -1,6 +1,14 @@
 <input type="hidden" id="edit_id" name="id" value="<?= $row->id ?>">
 
 <div class="ds-form-group">
+    <label>No. Dokumen / Kode Surat <span class="text-danger">*</span></label>
+    <input type="text" id="edit_docnumb" name="docnumb" class="form-control"
+           value="<?= htmlspecialchars(docnumb_value('SKS', $row->docnumb)) ?>"
+           placeholder="00000/SKS/IX/2026" maxlength="100" autocomplete="off">
+    <small class="text-muted">Nomor dokumen dapat diubah manual.</small>
+</div>
+
+<div class="ds-form-group">
     <label>Nama Pasien <span class="text-danger">*</span></label>
     <input type="text" id="edit_patient_name" name="patient_name" class="form-control"
            value="<?= htmlspecialchars($row->patient_name) ?>" maxlength="200" autocomplete="off">

@@ -9,6 +9,18 @@
 </p>
 
 <div class="row" style="margin: 0 -6px;">
+    <div class="col-md-5" style="padding: 0 6px;">
+        <div class="ds-form-group">
+            <label>No. Dokumen / Kode Surat <span class="text-danger">*</span></label>
+            <input type="text" id="sks_docnumb" class="form-control"
+                   value="<?= htmlspecialchars(docnumb_value('SKS', $sks ? $sks->docnumb : '')) ?>"
+                   placeholder="00000/SKS/IX/2026" maxlength="100" autocomplete="off">
+            <small class="text-muted">Nomor dokumen otomatis (00000). Ubah manual bila perlu.</small>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin: 0 -6px;">
     <div class="col-md-4" style="padding: 0 6px;">
         <div class="ds-form-group">
             <label>Dokter / Petugas <span class="text-danger">*</span></label>

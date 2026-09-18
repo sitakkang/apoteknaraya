@@ -174,7 +174,7 @@
                 $month_roman = array(1=>'I',2=>'II',3=>'III',4=>'IV',5=>'V',6=>'VI',7=>'VII',8=>'VIII',9=>'IX',10=>'X',11=>'XI',12=>'XII');
                 $roman = $month_roman[date('n')];
                 $year = date('Y');
-                echo sprintf('%05d', $row->id_skbs) . '/IMIP-SKBS/' . $roman . '/' . $year;
+                echo sprintf('%05d', $row->id_skbs) . '/SKBS/' . $roman . '/' . $year;
                 ?>
             </div>
         </div>

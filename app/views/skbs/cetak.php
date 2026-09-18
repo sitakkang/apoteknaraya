@@ -91,11 +91,14 @@
         .btn-print { display: inline-block; margin-bottom: 10px; padding: 6px 16px; background: #1a1a1a; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-print:hover { background: #000; }
 
-        /* ── CETAK: kunci ke 1 lembar A4 ───────────────── */
-        @page { size: A4 portrait; margin: 10mm 12mm; }
+        /* ── CETAK: kunci ke 1 lembar A4 ─────────────────
+           Margin halaman di-nol-kan agar area header/footer browser
+           (tanggal cetak & judul "Cetak SKBS") tidak ikut tercetak.
+           Jarak tepi diambil alih oleh padding body saat @media print. */
+        @page { size: A4 portrait; margin: 0; }
 
         @media print {
-            body { padding: 0; }
+            body { padding: 10mm 12mm; }
             .no-print { display: none; }
             .section, .ttd-wrap, .footer { page-break-inside: avoid; }
         }
@@ -188,5 +191,15 @@
     <div class="footer">
         <p>Dokumen ini diterbitkan secara elektronik dan valid tanpa tanda tangan basah.</p>
     </div>
+
+    <script>
+        // Judul dokumen dikosongkan saat dicetak supaya teks "Cetak SKBS"
+        // tidak ikut tampil di header cetak browser (di atas kopsurat).
+        (function () {
+            var judul = document.title;
+            window.addEventListener('beforeprint', function () { document.title = ''; });
+            window.addEventListener('afterprint', function () { document.title = judul; });
+        })();
+    </script>
 </body>
 </html>

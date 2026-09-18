@@ -171,6 +171,12 @@ class Sks extends CI_Controller {
         // Ambil patient_job dari ms_patient berdasarkan nama pasien
         $patient_job = $this->M_sks->get_patient_job_by_name($this->input->post('patient_name'));
 
+        // Nomor dokumen diisi user (default dari form: 00000/SKS/IX/2026)
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKS');
+        }
+
         $data = array(
             'patient_name' => strtoupper(trim($this->input->post('patient_name'))),
             'patient_nik'  => trim($this->input->post('patient_nik')),
@@ -180,7 +186,7 @@ class Sks extends CI_Controller {
             'alamat'       => trim($this->input->post('alamat')),
             'diagnosa'     => strtoupper(trim($this->input->post('diagnosa'))),
             'terapi'       => trim($this->input->post('terapi')),
-            'docnumb'      => $this->M_sks->generate_docnumb(),
+            'docnumb'      => $docnumb,
             'datefrom'     => $this->format_date_db($this->input->post('datefrom')),
             'dateto'       => $this->format_date_db($this->input->post('dateto')),
             'docdate'      => $this->format_date_db($this->input->post('docdate')),
@@ -211,6 +217,12 @@ class Sks extends CI_Controller {
         // Ambil patient_job dari ms_patient berdasarkan nama pasien
         $patient_job = $this->M_sks->get_patient_job_by_name($this->input->post('patient_name'));
 
+        // Nomor dokumen dapat diubah user pada form update
+        $docnumb = trim($this->input->post('docnumb'));
+        if ($docnumb === '') {
+            $docnumb = docnumb_default('SKS');
+        }
+
         $data = array(
             'patient_name' => strtoupper(trim($this->input->post('patient_name'))),
             'patient_nik'  => trim($this->input->post('patient_nik')),
@@ -220,6 +232,7 @@ class Sks extends CI_Controller {
             'alamat'       => trim($this->input->post('alamat')),
             'diagnosa'     => strtoupper(trim($this->input->post('diagnosa'))),
             'terapi'       => trim($this->input->post('terapi')),
+            'docnumb'      => $docnumb,
             'datefrom'     => $this->format_date_db($this->input->post('datefrom')),
             'dateto'       => $this->format_date_db($this->input->post('dateto')),
             'docdate'      => $this->format_date_db($this->input->post('docdate')),

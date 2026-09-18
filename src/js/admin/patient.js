@@ -228,6 +228,7 @@ $(document).ready(function () {
 
     $(document).on('click', '#save_sks_btn', function () {
         var payload = {
+            docnumb:      $('#docnumb').val(),
             patient_name: $('#patient_name').val(),
             patient_nik:  $('#sks_nik').val(),
             age:          $('#age').val(),
@@ -240,6 +241,10 @@ $(document).ready(function () {
             docdate:      $('#docdate').val(),
             doctby:       $('#doctby').val(),
         };
+        if ($('#docnumb').val() == '') {
+            notifNo("Silahkan isi nomor dokumen");
+            return false;
+        }
         if ($('#patient_name').val() == '') {
             notifNo("Silahkan isi nama pasien");
             return false;

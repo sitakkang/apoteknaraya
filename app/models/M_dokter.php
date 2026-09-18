@@ -322,27 +322,11 @@ class M_dokter extends CI_Model {
     }
 
     /**
-     * Generate nomor dokumen SKS (copied from M_sks)
+     * Nomor dokumen default SKS: 00000/SKS/IX/2026
+     * Running number selalu 00000 dan diperbarui manual oleh user pada form.
      */
     public function generate_docnumb_sks() {
-        $month = date('n');
-        $year  = date('Y');
-        $roman = $this->month_roman($month);
-
-        $last = $this->db->query(
-            "SELECT docnumb FROM sks
-             WHERE docnumb LIKE '%/SKS/$roman/$year'
-             ORDER BY id DESC LIMIT 1"
-        )->row();
-
-        if ($last) {
-            $parts = explode('/', $last->docnumb);
-            $next  = intval($parts[0]) + 1;
-        } else {
-            $next = 1;
-        }
-
-        return sprintf('%05d', $next) . '/SKS/' . $roman . '/' . $year;
+        return docnumb_default('SKS');
     }
 
     /**

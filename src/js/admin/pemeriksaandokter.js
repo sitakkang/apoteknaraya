@@ -205,6 +205,7 @@ $(document).ready(function () {
     $(document).on('click', '#btn_buat_sks', function () {
         var payload = {
             visit_id:  $('#visit_id_sks').val(),
+            docnumb:   $('#sks_docnumb').val(),
             doctby:    $('#sks_doctby').val(),
             diagnosa:  $('#sks_diagnosa').val(),
             terapi:    $('#sks_terapi').val(),
@@ -214,6 +215,7 @@ $(document).ready(function () {
         };
 
         if (!payload.doctby) { notifNo('Silakan pilih dokter'); return false; }
+        if (!payload.docnumb) { notifNo('Silakan isi nomor dokumen'); return false; }
         if (!payload.diagnosa) { notifNo('Silakan isi diagnosa'); return false; }
         if (!payload.datefrom || !payload.dateto) { notifNo('Silakan isi tanggal berlaku'); return false; }
 
@@ -255,6 +257,7 @@ $(document).ready(function () {
     $(document).on('click', '#btn_simpan_skbs', function () {
         var payload = {
             visit_id:      $(this).data('visit-id'),
+            docnumb:       $('#skbs_docnumb').val(),
             skbs_result:   $('#skbs_result').val(),
             skbs_desc:     $('#skbs_desc').val(),
             skbs_note:     $('#skbs_note').val(),
@@ -263,6 +266,7 @@ $(document).ready(function () {
             skbs_bb:       $('#skbs_bb').val(),
             skbs_bw:       $('#skbs_bw').val(),
         };
+        if (!payload.docnumb) { notifNo('Silakan isi nomor dokumen'); return false; }
         if (!payload.skbs_result) { notifNo('Silakan pilih hasil'); return false; }
 
         $.post(examUrl('act_simpan_skbs'), payload, function (res) {
@@ -328,6 +332,7 @@ $(document).ready(function () {
     $(document).on('click', '#btn_simpan_skmb', function () {
         var payload = {
             visit_id:         $(this).data('visit-id'),
+            docnumb:          $('#skmb_docnumb').val(),
             patient_name:     $('#skmb_patient_name').val(),
             nik:              $('#skmb_nik').val(),
             pengantar:        $('#skmb_pengantar').val(),
@@ -337,6 +342,7 @@ $(document).ready(function () {
             jam:              $('#skmb_jam').val(),
         };
 
+        if (!payload.docnumb) { notifNo('Silakan isi nomor dokumen'); return false; }
         if (!payload.patient_name) { notifNo('Silakan isi nama yang diantar'); return false; }
         if (!payload.tgl_datang) { notifNo('Silakan isi tanggal datang'); return false; }
         if (!payload.jam) { notifNo('Silakan isi jam'); return false; }

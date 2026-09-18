@@ -81,11 +81,14 @@
         .btn-print { display: inline-block; margin-bottom: 10px; padding: 6px 16px; background: #1a1a1a; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
         .btn-print:hover { background: #000; }
 
-        /* ── CETAK: kunci ke 1 lembar A4 ──────────────── */
-        @page { size: A4 portrait; margin: 10mm 12mm; }
+        /* ── CETAK: kunci ke 1 lembar A4 ─────────────────
+           Margin halaman di-nol-kan agar area header/footer browser
+           (tanggal cetak & judul "Cetak SKS") tidak ikut tercetak.
+           Jarak tepi diambil alih oleh padding body saat @media print. */
+        @page { size: A4 portrait; margin: 0; }
 
         @media print {
-            body { padding: 0; }
+            body { padding: 10mm 12mm; }
             .no-print { display: none; }
             .section, .ttd-wrap, .footer { page-break-inside: avoid; }
         }
@@ -200,7 +203,7 @@
         }
         ?>
         <p class="narasi">
-            Berdasarkan hasil pemeriksaan medis bahwa benar yang bersangkutan dalam keadaan sakit dan membutuhkan waktu istirahat selama <b><?= $lama ?> (hari)</b>,
+            Berdasarkan hasil pemeriksaan medis bahwa benar yang bersangkutan dalam keadaan sakit dan membutuhkan waktu istirahat selama <b><?= $lama ?> (<?= terbilang($lama) ?>) hari</b>,
             terhitung tanggal <b><?= $datefrom ?> s/d <?= $dateto ?></b>.
         </p>
         <p class="narasi">
@@ -235,6 +238,14 @@
     <script>
         // Auto-trigger print dialog on load (uncomment if desired)
         // window.onload = function() { window.print(); }
+
+        // Judul dokumen dikosongkan saat dicetak supaya teks "Cetak SKS"
+        // tidak ikut tampil di header cetak browser (di atas kopsurat).
+        (function () {
+            var judul = document.title;
+            window.addEventListener('beforeprint', function () { document.title = ''; });
+            window.addEventListener('afterprint', function () { document.title = judul; });
+        })();
     </script>
 </body>
 </html>
