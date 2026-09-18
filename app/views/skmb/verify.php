@@ -219,10 +219,7 @@
         <!-- Footer -->
         <div class="v-footer">
             <span>Diterbitkan oleh Naraya Farma</span>
-            <span class="v-footer-seal">
-                <span>&#9679;</span>
-                <?= !empty($row->insertdt) ? date('d-m-Y H:i', strtotime($row->insertdt)) : '-' ?>
-            </span>
+            
         </div>
     </div>
 </body>
