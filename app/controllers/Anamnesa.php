@@ -674,10 +674,12 @@ class Anamnesa extends CI_Controller {
         $age    = !empty($row->patient_bod) ? date_diff(date_create($row->patient_bod), date_create('now'))->y : ($existing->age ?? '');
         $gender = !empty($row->patient_gender) ? $row->patient_gender : ($existing->gender ?? '');
 
-        // Nomor dokumen diisi user pada form (default: 00000/SKS/IX/2026)
+        // Nomor dokumen diisi user pada form (default: 00000/SKS/IX/2026).
+        // Kalau form tidak mengirim nomor (mis. JS lama/belum ter-refresh),
+        // JANGAN reset ke 00000 — pakai nomor yang sudah tersimpan.
         $docnumb = trim($this->input->post('docnumb'));
         if ($docnumb === '') {
-            $docnumb = docnumb_default('SKS');
+            $docnumb = !empty($existing->docnumb) ? $existing->docnumb : docnumb_default('SKS');
         }
 
         $data = array(
@@ -776,10 +778,11 @@ class Anamnesa extends CI_Controller {
             'skbs_status'             => 1,
         );
 
-        // Nomor dokumen diisi user pada form (default: 00000/IMIP-SKBS/IX/2026)
+        // Nomor dokumen diisi user pada form (default: 00000/IMIP-SKBS/IX/2026).
+        // Kalau form tidak mengirim nomor, pertahankan nomor yang tersimpan.
         $docnumb = trim($this->input->post('docnumb'));
         if ($docnumb === '') {
-            $docnumb = docnumb_default('SKBS');
+            $docnumb = !empty($existing->docnumb) ? $existing->docnumb : docnumb_default('SKBS');
         }
         if ($this->db->field_exists('docnumb', 'trans_skbs')) {
             $data['docnumb'] = $docnumb;
@@ -851,10 +854,11 @@ class Anamnesa extends CI_Controller {
             'doct_by_name'      => $doct ? $doct->fullname : '',
         );
 
-        // Nomor dokumen diisi user pada form (default: 00000/SKMB/IX/2026)
+        // Nomor dokumen diisi user pada form (default: 00000/SKMB/IX/2026).
+        // Kalau form tidak mengirim nomor, pertahankan nomor yang tersimpan.
         $docnumb = trim($this->input->post('docnumb'));
         if ($docnumb === '') {
-            $docnumb = docnumb_default('SKMB');
+            $docnumb = !empty($existing->docnumb) ? $existing->docnumb : docnumb_default('SKMB');
         }
         $data['docnumb'] = $docnumb;
 

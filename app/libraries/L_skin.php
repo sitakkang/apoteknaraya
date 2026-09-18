@@ -72,17 +72,38 @@ class L_skin {
 		return ($this->skin->input->server('HTTP_X_REQUESTED_WITH')&&($this->skin->input->server('HTTP_X_REQUESTED_WITH')=='XMLHttpRequest'));
 	}
 
+	/**
+	 * URL aset (css/js) + penanda versi dari waktu modifikasi file.
+	 * Tanpa versi, browser bisa tetap memakai file lama setelah aplikasi
+	 * diperbarui — mis. payload AJAX lama sehingga nomor dokumen tidak terkirim.
+	 */
+	private function _asset_url($file)
+	{
+		if (stripos($file, 'http') === 0 || strpos($file, '//') === 0) {
+			return $file;
+		}
+
+		$url  = base_url($file);
+		$path = FCPATH . ltrim($file, '/');
+
+		if (is_file($path)) {
+			$url .= (strpos($url, '?') === false ? '?' : '&') . 'v=' . filemtime($path);
+		}
+
+		return $url;
+	}
+
 	function css_load($data)
 	{
 		if( ! is_array($data) OR count($data) === 0 ){
-			echo '<link rel="stylesheet" href="'.base_url($data).'">';
+			echo '<link rel="stylesheet" href="'.$this->_asset_url($data).'">';
 		}else{
 			foreach($data as $val) {
 				if(stripos($val, 'https') !== false) {
 					echo '<link rel="stylesheet" href="'.$val.'">';
             		echo "\n";
 				}else{
-					echo '<link rel="stylesheet" href="'.base_url($val).'">';
+					echo '<link rel="stylesheet" href="'.$this->_asset_url($val).'">';
 	            	echo "\n";
 	            }
 			}
@@ -92,14 +113,14 @@ class L_skin {
 	function js_load($data)
 	{
 		if( ! is_array($data) OR count($data) === 0 ){
-			echo '<script src="'.base_url($data).'"></script>';
+			echo '<script src="'.$this->_asset_url($data).'"></script>';
 		}else{
 			foreach($data as $val) {
 				if(stripos($val, 'https') !== false) {
 					echo '<script src="'.$val.'"></script>';
             		echo "\n";
 				}else{
-					echo '<script src="'.base_url($val).'"></script>';
+					echo '<script src="'.$this->_asset_url($val).'"></script>';
             		echo "\n";
 				}
 				

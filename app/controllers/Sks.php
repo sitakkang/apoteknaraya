@@ -217,10 +217,12 @@ class Sks extends CI_Controller {
         // Ambil patient_job dari ms_patient berdasarkan nama pasien
         $patient_job = $this->M_sks->get_patient_job_by_name($this->input->post('patient_name'));
 
-        // Nomor dokumen dapat diubah user pada form update
+        // Nomor dokumen dapat diubah user pada form update.
+        // Bila field tidak terkirim (mis. JS lama), pertahankan nomor tersimpan.
         $docnumb = trim($this->input->post('docnumb'));
         if ($docnumb === '') {
-            $docnumb = docnumb_default('SKS');
+            $existing = $this->M_sks->get_by_id($id);
+            $docnumb  = !empty($existing->docnumb) ? $existing->docnumb : docnumb_default('SKS');
         }
 
         $data = array(

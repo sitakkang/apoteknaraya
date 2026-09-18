@@ -167,10 +167,12 @@ class Skmb extends CI_Controller {
         $doct_by_id = intval($this->input->post('doctby'));
         $doct = $this->db->get_where('conf_users', array('id_user' => $doct_by_id))->row();
 
-        // Nomor dokumen dapat diubah user pada form update
+        // Nomor dokumen dapat diubah user pada form update.
+        // Bila field tidak terkirim (mis. JS lama), pertahankan nomor tersimpan.
         $docnumb = trim($this->input->post('docnumb'));
         if ($docnumb === '') {
-            $docnumb = docnumb_default('SKMB');
+            $existing = $this->M_skmb->get_by_id($id);
+            $docnumb  = !empty($existing->docnumb) ? $existing->docnumb : docnumb_default('SKMB');
         }
 
         $data = array(
